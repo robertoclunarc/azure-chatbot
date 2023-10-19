@@ -49,7 +49,7 @@ app.http('httpTriggerChatBotAzure', {
                 role: "assistant",
                 content: OpenAiResponse.choices[0].message.content
             });
-            context.log(context.conversation_history_dict);
+            //context.log(context.conversation_history_dict);
             context.res = {
                 body: OpenAiResponse.choices[0].message.content
             };
