@@ -8,17 +8,18 @@ app.http('httpTriggerChatBotAzure', {
         context.log(`La función HTTP procesó la solicitud de URL "${request.url}"`);
         if (request.method === 'GET') {
             const rVerifyToken = request.query.get('hub.verify_token');
-
+            context.log(rVerifyToken);
             if (rVerifyToken === 'my_awesome_token') {
                 const challenge = request.query.get('hub.challenge');
+                context.log(challenge);
                 context.res = {
-                    body: parseInt(challenge),
-                    statusCode: 200
+                    body: 'OK',
+                    status: 200,                 
                 };            
             }else{
                 context.res = {
                 body: 'Error, wrong validation token',
-                statusCode: 422
+                status: 422
                 };           
             }
             return context.res;
