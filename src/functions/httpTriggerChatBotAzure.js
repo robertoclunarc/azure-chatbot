@@ -13,8 +13,8 @@ app.http('httpTriggerChatBotAzure', {
                 const challenge = request.query.get('hub.challenge');
                 context.log(challenge);
                 context.res = {
-                    body: 'OK',
-                    status: 200,                 
+                    body: parseInt(challenge),
+                    statusCode: 200,
                 };            
             }else{
                 context.res = {
