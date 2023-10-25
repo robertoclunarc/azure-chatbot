@@ -26,8 +26,10 @@ app.http('httpTriggerChatBotAzure', {
         }else{
 
             try {
-                context.log(`datos entrada query: ${JSON.stringify(request.query)}`);
-                context.log(`datos entrada text: ${JSON.stringify(request.text())}`);
+                var data = JSON.parse(request);
+                context.log(`DATA: ${data}`)
+                context.log(`datos entrada query: ${data.query}`);
+                context.log(`datos entrada text: ${data.text}`);
                 const reqUser = {
                     role: "user",
                     content: await request.text(),
