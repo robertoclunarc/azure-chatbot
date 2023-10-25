@@ -82,41 +82,25 @@ app.http('httpTriggerChatBotAzure', {
                 const PAGE_ID = "909870002389450";
                 const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO0vffe6KwCsjptdMzKaG3TexV5zwAKwkU7l1n11UikoTMfWqKgbYcc3m5FgZCffAuBIkiUTjbzjk9cTH1RGAVtoSLGtY1F8wi0m8vWaBVhDTZBvkZB6lPAOmkUygJfYOei6VV8QiEYTdpTby2HeRj5ynHebSwNoNVrfA65ZB1vbscAKP0Un8lVb6Sn2smderxAzq9gZDZD";
                 
-                /*const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;*/
-
-                //var responseData;
+                /*const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;*/                
 
                 const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
                 const messageData = {
-                    "recipient": {
-                      "id": `${idRecipient}`
+                    recipient: {
+                      id: idRecipient
                     },
-                    "message": {
-                      "text":  `${reply}`
+                    message: {
+                      text:  reply
                     }
                 };
                 context.log(messageData);
-                context.log(URLInstagram);  
+                context.log(URLInstagram);
+
+                const body = JSON.stringify(messageData);
                 
-                const responseData = await axios.post(URLInstagram, messageData, {'Content-Type': 'application/json'});
+                const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
                 
-                /*await axios({
-                    method: "post",
-                    url: `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages&access_token=${PAGE_ACCESS_TOKEN}`,
-                    headers: {'Content-Type': 'application/json'},
-                    messageData,
-                  }).then((response) => {
-                    responseData = response;
-                    context.log(responseData);
-                  }).catch((error) => {
-                    context.error(error);
-                  }); */                
-                  
-                
-                //
-                
-                //responseData = await axios.post(URLInstagram);
                 context.log(`responseData: ${responseData}`);
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                 context.log(responseData.data);
