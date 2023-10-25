@@ -30,8 +30,8 @@ app.http('httpTriggerChatBotAzure', {
                 const data =  JSON.parse(req);
                 
                 context.log(`datos entrada query: ${JSON.stringify(data)}`);
-                const message = await data.value.message.text;
-                const idRecipient = await data.value.recipient.id;
+                const message = await data.entry[0].messaging[0].message.text;
+                const idRecipient = await data.entry[0].messaging[0].sender.id;
                 context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
                 
                 const reqUser = {
