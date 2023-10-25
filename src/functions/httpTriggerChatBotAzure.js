@@ -8,10 +8,10 @@ app.http('httpTriggerChatBotAzure', {
         context.log(`La función HTTP procesó la solicitud de URL "${request.url}"`);
         if (request.method === 'GET') {
             const rVerifyToken = request.query.get('hub.verify_token');
-            context.log(rVerifyToken);
+            //context.log(rVerifyToken);
             if (rVerifyToken === 'my_awesome_token') {
                 const challenge = request.query.get('hub.challenge');
-                context.log(challenge);
+                //context.log(challenge);
                 context.res = {
                     body: parseInt(challenge),
                     statusCode: 200,
@@ -26,6 +26,7 @@ app.http('httpTriggerChatBotAzure', {
         }else{
 
             try {
+                context.log(request);
                 const reqUser = {
                     role: "user",
                     content: await request.text(),
