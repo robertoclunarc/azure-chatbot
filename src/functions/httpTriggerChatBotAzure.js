@@ -94,7 +94,7 @@ app.http('httpTriggerChatBotAzure', {
                 };
                 return context.res;
             } catch (error) {
-                context.log.error('Error en el servicio: ', error);
+                context.log(`Error en el servicio:  ${error}`);
                 context.res = {
                     status: 500,
                     body: 'Error en el servicio: ' + error.message,
