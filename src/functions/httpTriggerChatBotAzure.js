@@ -92,7 +92,7 @@ app.http('httpTriggerChatBotAzure', {
                 
                 context.log(URLInstagram);
                 
-                axios.post(URLInstagram)
+                await axios.post(URLInstagram)
                 .then(response2 => response2.data)
                 .catch(error => context.log(error))
                 
