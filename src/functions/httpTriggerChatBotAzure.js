@@ -29,7 +29,7 @@ app.http('httpTriggerChatBotAzure', {
                 const req = await request.text();
                 const data =  JSON.parse(req);
                 
-                context.log(`datos entrada query: ${JSON.stringify(data)}`);
+                //context.log(`datos entrada query: ${JSON.stringify(data)}`);
                 const message = await data.value.message.text;
                 const idRecipient = await data.value.recipient.id;
                 context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
@@ -86,19 +86,18 @@ app.http('httpTriggerChatBotAzure', {
                 
                 context.log(URLInstagram);
                 
-                const responseData = await axios.post(URLInstagram);/*
-                .then(response2 => response2.data)
-                .catch(error => context.log(error))*/
-                context.log(responseData);
+                const responseData = await axios.post(URLInstagram);
+                context.log(`responseDAta: ${responseData.data}`);
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                 context.res = {
-                    body: responseData
+                    body: responseData.data
                 };
                 return context.res;
             } catch (error) {
+                context.log.error('Error en el servicio: ', error);
                 context.res = {
                     status: 500,
-                    body: 'Error al comunicarse con el servicio de OpenAI en Azure: ' + error.message,
+                    body: 'Error en el servicio: ' + error.message,
                 };
             }
         }    
