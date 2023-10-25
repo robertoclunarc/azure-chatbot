@@ -26,13 +26,16 @@ app.http('httpTriggerChatBotAzure', {
         }else{
 
             try {
-                var data = JSON.parse(request);
-                context.log(`DATA: ${data}`)
-                context.log(`datos entrada query: ${data.query}`);
-                context.log(`datos entrada text: ${data.text}`);
+                const req = await request.text();
+                const data =  JSON.parse(req);
+                
+                context.log(`datos entrada query: ${JSON.stringify(data)}`);
+                const message = await data.value.message.text;
+                context.log(`mensaje: ${message}`);
+                
                 const reqUser = {
                     role: "user",
-                    content: await request.text(),
+                    content: await message,
                 };
 
                 // Verifica si ya existe una conversación previa en el contexto
