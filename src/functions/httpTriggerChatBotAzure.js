@@ -31,7 +31,8 @@ app.http('httpTriggerChatBotAzure', {
                 
                 context.log(`datos entrada query: ${JSON.stringify(data)}`);
                 const message = await data.value.message.text;
-                context.log(`mensaje: ${message}`);
+                const idRecipient = await data.value.recipient.id;
+                context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
                 
                 const reqUser = {
                     role: "user",
@@ -78,6 +79,24 @@ app.http('httpTriggerChatBotAzure', {
                 context.res = {
                     body: OpenAiResponse.choices[0].message.content
                 };
+                ///////enviar a messenger//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                const LATEST_API_VERSION = "v9.0";
+                const PAGE_ID = "909870002389450";
+                const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO0vffe6KwCsjptdMzKaG3TexV5zwAKwkU7l1n11UikoTMfWqKgbYcc3m5FgZCffAuBIkiUTjbzjk9cTH1RGAVtoSLGtY1F8wi0m8vWaBVhDTZBvkZB6lPAOmkUygJfYOei6VV8QiEYTdpTby2HeRj5ynHebSwNoNVrfA65ZB1vbscAKP0Un8lVb6Sn2smderxAzq9gZDZD";
+                
+                const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages
+                ?recipient={'id':'${idRecipient}'}
+                &messaging_type=RESPONSE
+                &message={'text':'${context.res}'}
+                &access_token=${PAGE_ACCESS_TOKEN}`;
+                
+                context.log(URLInstagram);
+                
+                axios.post(URLInstagram)
+                .then(response2 => response2.data)
+                .catch(error => context.log(error))
+                
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////
                 return context.res;
             } catch (error) {
                 context.res = {
