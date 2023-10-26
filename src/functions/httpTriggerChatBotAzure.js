@@ -17,7 +17,7 @@ app.http('httpTriggerChatBotAzure', {
 
 async function handleGetRequest(request, context) {
     const rVerifyToken = request.query.get('hub.verify_token');
-    if (rVerifyToken === 'my_awesome_token') {
+    if (rVerifyToken === process.env.VerifyToken) {
         const challenge = request.query.get('hub.challenge');
         context.res = {
             body: parseInt(challenge),
@@ -66,10 +66,10 @@ async function handlePostRequest(request, context) {
 
         const headers = {
             'Content-Type': 'application/json',
-            'api-key': "cd89e5a7d91f4568abc9f135ae38016b",
+            'api-key': `${process.env.apiKeyAzureOpenAI}`,
         };
 
-        const urlServiceOpenaIAAzure = 'https://openiabotventas.openai.azure.com/openai/deployments/deploy-live-model/chat/completions?api-version=2023-07-01-preview';
+        const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
 
         const requestBody = JSON.stringify({
             "messages": context.conversation_history_dict,
@@ -91,7 +91,7 @@ async function handlePostRequest(request, context) {
         });                
         context.log(`respuesta: ${reply}`);
         if (sender==='instagram'){
-            context.log('intentando enviar a instagram...');
+            context.log('Intentando enviar a instagram...');
             const responseData = await sendMessageToMessenger(context, idRecipient, reply);
             context.log(responseData);
         }
@@ -112,7 +112,7 @@ async function handlePostRequest(request, context) {
 }
 
 async function sendMessageToMessenger(context, idRecipient, message) {
-    const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO0vffe6KwCsjptdMzKaG3TexV5zwAKwkU7l1n11UikoTMfWqKgbYcc3m5FgZCffAuBIkiUTjbzjk9cTH1RGAVtoSLGtY1F8wi0m8vWaBVhDTZBvkZB6lPAOmkUygJfYOei6VV8QiEYTdpTby2HeRj5ynHebSwNoNVrfA65ZB1vbscAKP0Un8lVb6Sn2smderxAzq9gZDZD";
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
     //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;
