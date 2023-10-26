@@ -120,6 +120,8 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         recipient: { id: idRecipient },
         message: { text: message },
     };
+    context.log(messageData);
+    context.log(URLInstagram);
     try {
         const responseData = await axios.post(URLInstagram, messageData, {'Content-Type': 'application/json'});
         return responseData;
