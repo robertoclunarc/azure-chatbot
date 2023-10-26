@@ -35,7 +35,7 @@ app.http('httpTriggerChatBotAzure', {
                 context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
 
                 const sender = await data.object;
-                const dateTime = await fotmatedDateTime(json.entry[0].time);
+                const dateTime = await fotmatedDateTime(data.entry[0].time);
                 context.log(sender);
                 context.log(dateTime);
                 const reqUser = {
