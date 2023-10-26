@@ -129,7 +129,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         message: { text: message },
     };
     //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
-    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;
+    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${message}'}&access_token=${PAGE_ACCESS_TOKEN}`;
     context.log(messageData);
     context.log(URLInstagram);
     try {
