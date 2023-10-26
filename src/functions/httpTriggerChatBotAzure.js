@@ -124,9 +124,11 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
     const PAGE_ID = "";
+    
+    const messageUTF8 = Buffer.from (message, 'utf-8');
     const messageData = {
         recipient: { id: idRecipient },
-        message: { text: message },
+        message: { text: messageUTF8 },
       };
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
     //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${message}'}&access_token=${PAGE_ACCESS_TOKEN}`;
