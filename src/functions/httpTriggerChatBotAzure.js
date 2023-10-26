@@ -127,12 +127,13 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const messageData = {
         recipient: { id: idRecipient },
         message: { text: message },
-    };
+      };
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
     //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${message}'}&access_token=${PAGE_ACCESS_TOKEN}`;
-    context.log(messageData);
+    
     context.log(URLInstagram);
     const body = JSON.stringify(messageData);
+    context.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
         return responseData;
