@@ -123,16 +123,17 @@ async function handlePostRequest(request, context) {
 async function sendMessageToMessenger(context, idRecipient, message) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
-    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
-    //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;
+    
     const messageData = {
         recipient: { id: idRecipient },
         message: { text: message },
     };
+    //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/${PAGE_ID}/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${reply}'}&access_token=${PAGE_ACCESS_TOKEN}`;
     context.log(messageData);
     context.log(URLInstagram);
     try {
-        const responseData = await axios.post(URLInstagram, messageData, {'Content-Type': 'application/json'});
+        const responseData = await axios.post(URLInstagram/*, messageData, {'Content-Type': 'application/json'}*/);
         return responseData;
     } catch (error) {
         context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
