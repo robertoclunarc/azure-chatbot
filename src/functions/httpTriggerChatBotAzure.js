@@ -45,8 +45,6 @@ async function handlePostRequest(request, context) {
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
         const dateTime = await fotmatedDateTime(tiempo);
-        context.log(sender);
-        context.log(dateTime);
 
         const reqUser = {
             role: "user",
