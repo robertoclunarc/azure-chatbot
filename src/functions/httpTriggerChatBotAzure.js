@@ -37,14 +37,23 @@ async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
         const data = JSON.parse(req);
-
-        const message = data.entry[0].messaging[0].message.text;
-        const idRecipient = data.entry[0].messaging[0].recipient.id;
+        
+        
         context.log(`datos entrada query: ${JSON.stringify(data)}`);
         
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
         const dateTime = await fotmatedDateTime(tiempo);
+        var message;
+        var idRecipient;
+        if (sender==='whatsapp'){
+            message = data.content;
+            idRecipient = data?.idRecipient;
+        }
+        else{
+            idRecipient = data.entry[0].messaging[0].recipient.id;
+            message = data.entry[0].messaging[0].message.text;
+        }
 
         const reqUser = {
             role: "user",
