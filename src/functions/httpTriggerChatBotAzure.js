@@ -36,8 +36,7 @@ async function handleGetRequest(request, context) {
 async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
-        const data = JSON.parse(req);
-        
+        const data = JSON.parse(req);        
         
         context.log(`datos entrada query: ${JSON.stringify(data)}`);
         
@@ -54,55 +53,58 @@ async function handlePostRequest(request, context) {
             idRecipient = data.entry[0].messaging[0].recipient.id;
             message = data.entry[0].messaging[0].message.text;
         }
-
-        const reqUser = {
-            role: "user",
-            content: message,
-        };
-
-        // Verifica si ya existe una conversación previa en el contexto
-        if (!context.conversation_history_dict) {
-            context.conversation_history_dict = [];
-            const messages_init = {
-                role: "system",
-                content: "You are a technological equipment sales agent whose main objective is to help users select a device according to their needs and budget. You are friendly and concise. It only provides objective answers to queries and does not provide answers that are not related to technology equipment."
+        
+        var reply = '';
+        if (message!==undefined && message!==''){
+            const reqUser = {
+                role: "user",
+                content: message,
             };
-            context.conversation_history_dict.push(messages_init);
+            // Verifica si ya existe una conversación previa en el contexto
+            if (!context.conversation_history_dict) {
+                context.conversation_history_dict = [];
+                const messages_init = {
+                    role: "system",
+                    content: "You are a technological equipment sales agent whose main objective is to help users select a device according to their needs and budget. You are friendly and concise. It only provides objective answers to queries and does not provide answers that are not related to technology equipment."
+                };
+                context.conversation_history_dict.push(messages_init);
+            }
+            context.conversation_history_dict.push(reqUser);
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.apiKeyAzureOpenAI}`,
+            };
+
+            const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
+
+            const requestBody = JSON.stringify({
+                "messages": context.conversation_history_dict,
+                "max_tokens": 1000,
+                "temperature": 0.5,
+                "frequency_penalty": 0,
+                "presence_penalty": 0,
+                "top_p": 0.95,
+                "stop": null,
+            });
+
+            const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
+
+            const OpenAiResponse = response.data;
+            reply = OpenAiResponse.choices[0].message.content;
+            context.conversation_history_dict.push({
+                role: "assistant",
+                content: reply,
+            });                
+            context.log(JSON.stringify(context.conversation_history_dict));
+            if (sender==='instagram'){
+                context.log('Intentando enviar a instagram...');
+                const responseData = await sendMessageToMessenger(context, idRecipient, reply);
+                context.log(responseData);
+            }
+        }else{
+            reply = 'No se puede procesar mensaje!';
         }
-        context.conversation_history_dict.push(reqUser);
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'api-key': `${process.env.apiKeyAzureOpenAI}`,
-        };
-
-        const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
-
-        const requestBody = JSON.stringify({
-            "messages": context.conversation_history_dict,
-            "max_tokens": 1000,
-            "temperature": 0.5,
-            "frequency_penalty": 0,
-            "presence_penalty": 0,
-            "top_p": 0.95,
-            "stop": null,
-        });
-
-        const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
-
-        const OpenAiResponse = response.data;
-        const reply = OpenAiResponse.choices[0].message.content;
-        context.conversation_history_dict.push({
-            role: "assistant",
-            content: reply,
-        });                
-        context.log(JSON.stringify(context.conversation_history_dict));
-        if (sender==='instagram'){
-            context.log('Intentando enviar a instagram...');
-            const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-            context.log(responseData);
-        }
-
         context.res = {
             body: reply,
         };
