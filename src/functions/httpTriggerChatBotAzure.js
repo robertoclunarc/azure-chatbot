@@ -35,7 +35,8 @@ app.http('httpTriggerChatBotAzure', {
                 context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
 
                 const sender = await data.object;
-                const dateTime = await fotmatedDateTime(data.entry[0].time);
+                const tiempo = new Date(); //new Date(data.entry[0].time)
+                const dateTime = await fotmatedDateTime(tiempo);
                 context.log(sender);
                 context.log(dateTime);
                 const reqUser = {
@@ -91,19 +92,15 @@ app.http('httpTriggerChatBotAzure', {
                 const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
                 const messageData = {
-                    recipient: {
-                      id: idRecipient
-                    },
-                    message: {
-                      text:  reply
-                    }
+                    recipient: { id: `${idRecipient}` },
+                    message: { text:  `${reply}` }
                 };
                 context.log(messageData);
                 context.log(URLInstagram);
 
                 const body = JSON.stringify(messageData);
                 
-                const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
+                const responseData = await axios.post(URLInstagram, messageData/*, {'Content-Type': 'application/json'}*/);
                 
                 context.log(`responseData: ${responseData}`);
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +121,7 @@ app.http('httpTriggerChatBotAzure', {
 });
 
 async function fotmatedDateTime(timeInMilliseconds) {
-    const formattedDate = new Date(timeInMilliseconds);
+    const formattedDate = timeInMilliseconds;
 
     const day = formattedDate.getDate().toString().padStart(2, '0');
     const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
@@ -132,7 +129,7 @@ async function fotmatedDateTime(timeInMilliseconds) {
     const hours = formattedDate.getHours().toString().padStart(2, '0');
     const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
 
-    const formattedTime = `${year}/${month}/${day} ${hours}:${minutes}`;
+    const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:00`;
     
     return formattedTime;
 }
