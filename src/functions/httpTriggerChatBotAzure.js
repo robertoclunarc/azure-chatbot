@@ -92,7 +92,7 @@ async function handlePostRequest(request, context) {
         context.log(`respuesta: ${reply}`);
         if (sender==='instagram'){
             context.log('intentando enviar a instagram...');
-            const responseData = await sendMessageToMessenger(idRecipient, reply);
+            const responseData = await sendMessageToMessenger(context, idRecipient, reply);
             context.log(responseData);
         }
 
@@ -111,7 +111,7 @@ async function handlePostRequest(request, context) {
     }
 }
 
-async function sendMessageToMessenger(idRecipient, message) {
+async function sendMessageToMessenger(context, idRecipient, message) {
     const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO0vffe6KwCsjptdMzKaG3TexV5zwAKwkU7l1n11UikoTMfWqKgbYcc3m5FgZCffAuBIkiUTjbzjk9cTH1RGAVtoSLGtY1F8wi0m8vWaBVhDTZBvkZB6lPAOmkUygJfYOei6VV8QiEYTdpTby2HeRj5ynHebSwNoNVrfA65ZB1vbscAKP0Un8lVb6Sn2smderxAzq9gZDZD";
     const LATEST_API_VERSION = "v18.0";
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
