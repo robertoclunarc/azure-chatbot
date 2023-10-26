@@ -125,7 +125,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const LATEST_API_VERSION = "v18.0";
     const PAGE_ID = "";
     
-    const messageUTF8 = Buffer.from (message, 'utf-8');
+    const messageUTF8 = Buffer.from (message, 'utf-8').toString();
     const messageData = {
         recipient: { id: idRecipient },
         message: { text: messageUTF8 },
