@@ -33,7 +33,11 @@ app.http('httpTriggerChatBotAzure', {
                 const message = await data.entry[0].messaging[0].message.text;
                 const idRecipient = await data.entry[0].messaging[0].recipient.id;
                 context.log(`mensaje: ${message} IDRECIPIENT: ${idRecipient}`);
-                
+
+                const sender = await data.object;
+                const dateTime = await fotmatedDateTime(json.entry[0].time);
+                context.log(sender);
+                context.log(dateTime);
                 const reqUser = {
                     role: "user",
                     content: await message,
@@ -118,3 +122,17 @@ app.http('httpTriggerChatBotAzure', {
         }    
     }
 });
+
+async function fotmatedDateTime(timeInMilliseconds) {
+    const formattedDate = new Date(timeInMilliseconds);
+
+    const day = formattedDate.getDate().toString().padStart(2, '0');
+    const month = (formattedDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = formattedDate.getFullYear();
+    const hours = formattedDate.getHours().toString().padStart(2, '0');
+    const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
+
+    const formattedTime = `${year}/${month}/${day} ${hours}:${minutes}`;
+    
+    return formattedTime;
+}
