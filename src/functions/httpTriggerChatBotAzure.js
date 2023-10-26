@@ -89,8 +89,9 @@ async function handlePostRequest(request, context) {
             role: "assistant",
             content: reply,
         });                
-        
+        context.log(`respuesta: S{reply}`);
         if (sender==='instragram'){
+            context.log('intentando enviar a instagram...');
             const responseData = await sendMessageToMessenger(idRecipient, reply);
             context.log(responseData);
         }
@@ -127,8 +128,6 @@ async function sendMessageToMessenger(idRecipient, message) {
         return null;
     }
 }
-
-
 
 /*app.http('httpTriggerChatBotAzure', {
     methods: ['GET', 'POST' ],
