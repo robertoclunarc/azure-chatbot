@@ -14,9 +14,10 @@ app.http('httpTriggerChatBotAzure', {
             const data = JSON.parse(req);
             const sender = data.object;
             const idRecipient = data?.idRecipient;
-            if (sender==="17841441314278442"){
-                context.res = {
-                    status: 200,
+            context.log(`Sender: $sender`);
+            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            if (sender === "17841441314278442"){
+                context.res = {                    
                     body: 'idRecipient: ' + idRecipient,
                 };
                 return context.res
@@ -57,9 +58,7 @@ async function handleGetRequest(request, context) {
 async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
-        const data = JSON.parse(req);        
-        
-        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        const data = JSON.parse(req); 
         
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
