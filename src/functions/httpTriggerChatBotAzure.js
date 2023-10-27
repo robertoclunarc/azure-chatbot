@@ -138,7 +138,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const body = messageData;
     context.log(body);
     try {
-        const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
+        const responseData = await axios.post(URLInstagram, body/*, {'Content-Type': 'application/json'}*/);
         return responseData;
     } catch (error) {
         context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
