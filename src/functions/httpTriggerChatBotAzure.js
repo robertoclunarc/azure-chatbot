@@ -10,9 +10,9 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            const req = await request.text();
-            const data = await JSON.parse(req);
-            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            /*const req = await request.text();
+            const data = await JSON.parse(req);*/
+            
             return handlePostRequest(request, context);
         }
     }
@@ -40,7 +40,7 @@ async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
         const data = await JSON.parse(req);
-        
+        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
         const dateTime = await fotmatedDateTime(tiempo);
