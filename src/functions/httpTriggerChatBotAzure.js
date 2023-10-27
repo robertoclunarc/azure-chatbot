@@ -10,10 +10,31 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            return handlePostRequest(request, context);
+            const req = await request.text();
+            const data = JSON.parse(req);
+            const sender = data.object;
+            const idRecipient = data?.idRecipient;
+            if (sender==="17841441314278442"){
+                context.res = {
+                    status: 200,
+                    body: 'idRecipient: ' + idRecipient,
+                };
+                return context.res
+            }else{
+                return handlePostRequest(request, context);
+            }            
         }
     }
 });
+//s{"sender":{"id":"23904724149173814"},"recipient":{"id":"17841441314278442"}
+
+//"sender":{"id":"23904724149173814"},"recipient":{"id":"17841441314278442"},
+
+//{"sender":{"id":"6950442538325963"},"recipient":{"id":"17841441314278442"}
+//"sender":{"id":"17841441314278442"},"recipient":{"id":"23904724149173814"}
+
+//{"sender":{"id":"6484968691630280"},"recipient":{"id":"17841441314278442"}
+//{"sender":{"id":"6484968691630280"},"recipient":{"id":"17841441314278442"}
 
 async function handleGetRequest(request, context) {
     const rVerifyToken = request.query.get('hub.verify_token');
@@ -101,7 +122,7 @@ async function handlePostRequest(request, context) {
             if (sender==='instagram'){
                 context.log('Intentando enviar a instagram...');
                 const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-                context.log(responseData);
+                context.log(responseData.data);
             }
         }else{
             reply = 'No se puede procesar mensaje!';
