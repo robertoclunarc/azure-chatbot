@@ -36,8 +36,7 @@ async function handleGetRequest(request, context) {
 async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
-        const data = JSON.parse(req);
-        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        const data = JSON.parse(req);        
         const sender = data.object;
         
         var message;
@@ -52,10 +51,11 @@ async function handlePostRequest(request, context) {
         }
 
         //////valida que no se ejecute dos veces el bot
-        if (idRecipient !== "17841441314278442"){ 
+        if (idRecipient !== process.env.serderIdVentaIntagram){
+            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = "You are SalesBot, an automated service to sell items for a technology store. You are helpful, creative, clever, a closer, and very aggressive. Your goal is to get the customer to purchase an item. The price is always final, and no discounts are allowed. You first greet the customer, then sell the item. Once the item has been sold collect the name, number and address of the customer and explain to them that you will pass the information to the delivery department. You want to close as many sales as possible. Your target audience lives in the Dominican Republic so you should speak in Spanish, use local slang and cadence. Your audience has an average education of high school so keep concepts simple, clear, and concise. Make sure the answers are very brief, no more than 2 paragraphs with a maximum of 3 sentences each but the more concise the better. Keep it short! If they ask for something outside of the inventory tell them that these are the only items that are currently available. The inventory includes: HP ProBook 650 G2 with a 15.6 inches screen, Intel Core i5 processor, 8GB Ram and 128GB SSD for $13,999 Dominican pesos. Its used in good condition showing slight signs of wear.";
+            const prompt = process.env.promptVentasInstagram;
            
             var reply = '';
             if (message!==undefined && message!==''){
@@ -136,9 +136,8 @@ async function sendMessageToMessenger(context, idRecipient, message) {
       };
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
-    
-    context.log(URLInstagram);    
-    context.log(body);
+    //context.log(URLInstagram);    
+    //context.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
         return responseData;
