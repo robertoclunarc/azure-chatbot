@@ -10,9 +10,9 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            const req = await request.text();
-            const data = JSON.parse(req);
-            console.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            const dataRequestText = await request.text();
+            const dataObject = JSON.parse(dataRequestText);
+            console.log(`dataObject: ${JSON.stringify(dataObject)}`);
             return handlePostRequest(request, context);
         }
     }
