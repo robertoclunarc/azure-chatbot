@@ -10,10 +10,10 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            const req = await request.text();
+            /*const req = await request.text();
             const data = JSON.parse(req);
             const sender = data.object;
-            const idRecipient = data?.idRecipient;
+            const idRecipient = data?.idRecipient;*/
             context.log(`Sender: ${sender}`);
             context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             /*if (sender === "17841441314278442"){
@@ -28,15 +28,6 @@ app.http('httpTriggerChatBotAzure', {
         }
     }
 });
-//s{"sender":{"id":"23904724149173814"},"recipient":{"id":"17841441314278442"}
-
-//"sender":{"id":"23904724149173814"},"recipient":{"id":"17841441314278442"},
-
-//{"sender":{"id":"6950442538325963"},"recipient":{"id":"17841441314278442"}
-//"sender":{"id":"17841441314278442"},"recipient":{"id":"23904724149173814"}
-
-//{"sender":{"id":"6484968691630280"},"recipient":{"id":"17841441314278442"}
-//{"sender":{"id":"6484968691630280"},"recipient":{"id":"17841441314278442"}
 
 async function handleGetRequest(request, context) {
     const rVerifyToken = request.query.get('hub.verify_token');
