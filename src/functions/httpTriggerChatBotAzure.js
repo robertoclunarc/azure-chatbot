@@ -14,16 +14,17 @@ app.http('httpTriggerChatBotAzure', {
             const data = JSON.parse(req);
             const sender = data.object;
             const idRecipient = data?.idRecipient;
-            context.log(`Sender: $sender`);
+            context.log(`Sender: ${sender}`);
             context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
-            if (sender === "17841441314278442"){
+            /*if (sender === "17841441314278442"){
                 context.res = {                    
                     body: 'idRecipient: ' + idRecipient,
                 };
                 return context.res
             }else{
                 return handlePostRequest(request, context);
-            }            
+            }*/
+            return handlePostRequest(request, context);
         }
     }
 });
