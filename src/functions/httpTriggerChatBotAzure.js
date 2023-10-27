@@ -135,7 +135,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${textoCodificado}'}&access_token=${PAGE_ACCESS_TOKEN}`;
     
     context.log(URLInstagram);
-    const body = JSON.stringify(messageData);
+    const body = messageData;
     context.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
