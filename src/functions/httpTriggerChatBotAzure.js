@@ -102,7 +102,7 @@ async function handlePostRequest(request, context) {
             if (sender==='instagram'){
                 context.log('Intentando enviar a instagram...');
                 const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-                context.log(responseData);
+                context.log(responseData.data);
             }
         }else{
             reply = 'No se puede procesar mensaje!';
