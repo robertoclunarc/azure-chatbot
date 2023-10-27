@@ -50,7 +50,7 @@ async function handlePostRequest(request, context) {
             idRecipient = data?.idRecipient;
         }
         else{
-            idRecipient = data.entry[0].messaging[0].recipient.id;
+            idRecipient = data.entry[0].messaging[0].sender.id;
             message = data.entry[0].messaging[0].message.text;
         }
         
