@@ -122,9 +122,8 @@ async function handlePostRequest(request, context) {
 
 async function sendMessageToMessenger(context, idRecipient, message) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-    const LATEST_API_VERSION = "v18.0";
-    const PAGE_ID = "";
-
+    const LATEST_API_VERSION = "v18.0";    
+/*
     if (message && Buffer.byteLength(message, 'utf8') <= 1000) {
         const utf8Message = Buffer.from(message, 'utf8').toString('utf8');
         const url = `https://graph.facebook.com/v18.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
@@ -133,49 +132,26 @@ async function sendMessageToMessenger(context, idRecipient, message) {
                 recipient: { id: idRecipient },
                 message: { text: message }
             });
-            /*context.res = {
-                status: 200,
-                body: "Message sent successfully",
-                headers: {
-                    'Content-Type': 'application/json'  } };*/
-            //context.log(context.res);  
+              
             context.log(`response.data: ${response.data}`);
             return response.data;        
-        } catch (error) {
-            //context.error(error);
-            context.error(error.message);
-            /*context.res = {
-                status: 500,
-                body: "Error sending message: " + error.message,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };*/
+        } catch (error) {            
+            context.error(error.message);            
         }
     } else {
-        context.log("Please provide a message within 1000 bytes");
-        /*context.res = {
-            status: 400,
-            body: "Please provide a message within 1000 bytes",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };*/
+        context.log("Por favor proporcione un mensaje dentro de 1000 bytes");        
         return null;
     }
+ */   
     
-    /*const messageUTF8 = Buffer.from (message, 'utf-8');
-    const messageData = {
+    const body = {
         recipient: { id: idRecipient },
-        message: { text: encodeURIComponent(message) },
+        message: { text: message},
       };
-    //const textoCodificado = encodeURIComponent(message);  
-    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
     
-    //const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?recipient={'id':'${idRecipient}'}&messaging_type=RESPONSE&message={'text':'${textoCodificado}'}&access_token=${PAGE_ACCESS_TOKEN}`;
+    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
     
-    context.log(URLInstagram);
-    const body = messageData;
+    context.log(URLInstagram);    
     context.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body); //{'Content-Type': 'application/json'}
@@ -183,7 +159,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     } catch (error) {
         context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
         return null;
-    }*/
+    }
 }
 
 async function fotmatedDateTime(timeInMilliseconds) {
