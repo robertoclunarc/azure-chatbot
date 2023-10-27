@@ -10,9 +10,6 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            const dataRequestText = await request.text();
-            const dataObject = JSON.parse(dataRequestText);
-            console.log(`dataObject: ${JSON.stringify(dataObject)}`);
             return handlePostRequest(request, context);
         }
     }
@@ -39,12 +36,10 @@ async function handleGetRequest(request, context) {
 async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
-        const data = await JSON.parse(req);
+        const data = JSON.parse(req);
         context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         const sender = data.object;
-        const tiempo = new Date(); //new Date(data.entry[0].time)
-        const dateTime = await fotmatedDateTime(tiempo);
-        const prompt = "You are SalesBot, an automated service to sell items for a technology store. You are helpful, creative, clever, a closer, and very aggressive. Your goal is to get the customer to purchase an item. The price is always final, and no discounts are allowed. You first greet the customer, then sell the item. Once the item has been sold collect the name, number and address of the customer and explain to them that you will pass the information to the delivery department. You want to close as many sales as possible. Your target audience lives in the Dominican Republic so you should speak in Spanish, use local slang and cadence. Your audience has an average education of high school so keep concepts simple, clear, and concise. Make sure the answers are very brief, no more than 2 paragraphs with a maximum of 3 sentences each but the more concise the better. Keep it short! If they ask for something outside of the inventory tell them that these are the only items that are currently available. The inventory includes: HP ProBook 650 G2 with a 15.6 inches screen, Intel Core i5 processor, 8GB Ram and 128GB SSD for $13,999 Dominican pesos. Its used in good condition showing slight signs of wear.";
+        
         var message;
         var idRecipient;
         if (sender==='whatsapp'){
@@ -55,62 +50,72 @@ async function handlePostRequest(request, context) {
             idRecipient = data.entry[0].messaging[0].sender.id;
             message = data.entry[0].messaging[0].message.text;
         }
-        
-        var reply = '';
-        if (message!==undefined && message!==''){
-            const reqUser = {
-                role: "user",
-                content: message,
-            };
-            // Verifica si ya existe una conversación previa en el contexto
-            if (!context.conversation_history_dict) {
-                context.conversation_history_dict = [];
-                const messages_init = {
-                    role: "system",
-                    content: prompt
+
+        //////valida que no se ejecute dos veces el bot
+        if (idRecipient !== "17841441314278442"){ 
+            const tiempo = new Date(); //new Date(data.entry[0].time)
+            const dateTime = await fotmatedDateTime(tiempo);
+            const prompt = "You are SalesBot, an automated service to sell items for a technology store. You are helpful, creative, clever, a closer, and very aggressive. Your goal is to get the customer to purchase an item. The price is always final, and no discounts are allowed. You first greet the customer, then sell the item. Once the item has been sold collect the name, number and address of the customer and explain to them that you will pass the information to the delivery department. You want to close as many sales as possible. Your target audience lives in the Dominican Republic so you should speak in Spanish, use local slang and cadence. Your audience has an average education of high school so keep concepts simple, clear, and concise. Make sure the answers are very brief, no more than 2 paragraphs with a maximum of 3 sentences each but the more concise the better. Keep it short! If they ask for something outside of the inventory tell them that these are the only items that are currently available. The inventory includes: HP ProBook 650 G2 with a 15.6 inches screen, Intel Core i5 processor, 8GB Ram and 128GB SSD for $13,999 Dominican pesos. Its used in good condition showing slight signs of wear.";
+           
+            var reply = '';
+            if (message!==undefined && message!==''){
+                const reqUser = {
+                    role: "user",
+                    content: message,
                 };
-                context.conversation_history_dict.push(messages_init);
-            }
-            context.conversation_history_dict.push(reqUser);
+                // Verifica si ya existe una conversación previa en el contexto
+                if (!context.conversation_history_dict) {
+                    context.conversation_history_dict = [];
+                    const messages_init = {
+                        role: "system",
+                        content: prompt
+                    };
+                    context.conversation_history_dict.push(messages_init);
+                }
+                context.conversation_history_dict.push(reqUser);
 
-            const headers = {
-                'Content-Type': 'application/json',
-                'api-key': `${process.env.apiKeyAzureOpenAI}`,
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'api-key': `${process.env.apiKeyAzureOpenAI}`,
+                };
+
+                const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
+
+                const requestBody = JSON.stringify({
+                    "messages": context.conversation_history_dict,
+                    "max_tokens": 1000,
+                    "temperature": 0.5,
+                    "frequency_penalty": 0,
+                    "presence_penalty": 0,
+                    "top_p": 0.95,
+                    "stop": null,
+                });
+
+                const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
+
+                const OpenAiResponse = response.data;
+                reply = OpenAiResponse.choices[0].message.content;
+                context.conversation_history_dict.push({
+                    role: "assistant",
+                    content: reply,
+                });                
+                //context.log(JSON.stringify(context.conversation_history_dict));
+                if (sender==='instagram'){
+                    context.log('Intentando enviar a instagram...');
+                    const responseData = await sendMessageToMessenger(context, idRecipient, reply);
+                    context.log(responseData.data);
+                }
+            }else{
+                reply = 'No se puede procesar mensaje!';
+            }
+            context.res = {
+                body: reply,
             };
-
-            const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
-
-            const requestBody = JSON.stringify({
-                "messages": context.conversation_history_dict,
-                "max_tokens": 1000,
-                "temperature": 0.5,
-                "frequency_penalty": 0,
-                "presence_penalty": 0,
-                "top_p": 0.95,
-                "stop": null,
-            });
-
-            const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
-
-            const OpenAiResponse = response.data;
-            reply = OpenAiResponse.choices[0].message.content;
-            context.conversation_history_dict.push({
-                role: "assistant",
-                content: reply,
-            });                
-            //context.log(JSON.stringify(context.conversation_history_dict));
-            if (sender==='instagram'){
-                context.log('Intentando enviar a instagram...');
-                const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-                context.log(responseData.data);
-            }
         }else{
-            reply = 'No se puede procesar mensaje!';
+            context.res = {                    
+                body: 'idRecipient: ' + idRecipient,
+            };
         }
-        context.res = {
-            body: reply,
-        };
-
         return context.res;
     } catch (error) {
         context.error(`Error en el servicio:  ${error}`);
