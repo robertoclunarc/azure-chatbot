@@ -11,7 +11,7 @@ app.http('httpTriggerChatBotAzure', {
             return handleGetRequest(request, context);
         } else {
             const req = await request.text();
-            const data = JSON.parse(req);
+            const data = await JSON.parse(req);
             context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             return handlePostRequest(request, context);
         }
@@ -39,7 +39,7 @@ async function handleGetRequest(request, context) {
 async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
-        const data = JSON.parse(req);
+        const data = await JSON.parse(req);
         
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
@@ -102,7 +102,7 @@ async function handlePostRequest(request, context) {
             if (sender==='instagram'){
                 context.log('Intentando enviar a instagram...');
                 const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-                context.log(responseData.data);
+                context.log(responseData);
             }
         }else{
             reply = 'No se puede procesar mensaje!';
