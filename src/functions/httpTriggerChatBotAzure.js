@@ -131,36 +131,36 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         try {
             const response = await axios.post(url, {
                 recipient: { id: idRecipient },
-                message: { text: utf8Message }
+                message: { text: message }
             });
-            context.res = {
+            /*context.res = {
                 status: 200,
                 body: "Message sent successfully",
                 headers: {
-                    'Content-Type': 'application/json'  } };
-            context.log(context.res);  
-            context.log(response.data);
+                    'Content-Type': 'application/json'  } };*/
+            //context.log(context.res);  
+            context.log(`response.data: ${response.data}`);
             return response.data;        
         } catch (error) {
-            context.error(error);
+            //context.error(error);
             context.error(error.message);
-            context.res = {
+            /*context.res = {
                 status: 500,
                 body: "Error sending message: " + error.message,
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            };
+            };*/
         }
     } else {
         context.log("Please provide a message within 1000 bytes");
-        context.res = {
+        /*context.res = {
             status: 400,
             body: "Please provide a message within 1000 bytes",
             headers: {
                 'Content-Type': 'application/json'
             }
-        };
+        };*/
         return null;
     }
     
