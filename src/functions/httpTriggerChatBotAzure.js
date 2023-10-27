@@ -38,7 +38,7 @@ async function handlePostRequest(request, context) {
         const req = await request.text();
         const data = JSON.parse(req);        
         
-        context.log(`datos entrada query: ${JSON.stringify(data)}`);
+        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         
         const sender = data.object;
         const tiempo = new Date(); //new Date(data.entry[0].time)
@@ -96,7 +96,7 @@ async function handlePostRequest(request, context) {
                 role: "assistant",
                 content: reply,
             });                
-            context.log(JSON.stringify(context.conversation_history_dict));
+            //context.log(JSON.stringify(context.conversation_history_dict));
             if (sender==='instagram'){
                 context.log('Intentando enviar a instagram...');
                 const responseData = await sendMessageToMessenger(context, idRecipient, reply);
@@ -123,27 +123,6 @@ async function handlePostRequest(request, context) {
 async function sendMessageToMessenger(context, idRecipient, message) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";    
-/*
-    if (message && Buffer.byteLength(message, 'utf8') <= 1000) {
-        const utf8Message = Buffer.from(message, 'utf8').toString('utf8');
-        const url = `https://graph.facebook.com/v18.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
-        try {
-            const response = await axios.post(url, {
-                recipient: { id: idRecipient },
-                message: { text: message }
-            });
-              
-            context.log(`response.data: ${response.data}`);
-            return response.data;        
-        } catch (error) {            
-            context.error(error.message);            
-        }
-    } else {
-        context.log("Por favor proporcione un mensaje dentro de 1000 bytes");        
-        return null;
-    }
- */   
-    
     const body = {
         recipient: { id: idRecipient },
         message: { text: message},
@@ -154,7 +133,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     context.log(URLInstagram);    
     context.log(body);
     try {
-        const responseData = await axios.post(URLInstagram, body); //{'Content-Type': 'application/json'}
+        const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
         return responseData;
     } catch (error) {
         context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
