@@ -99,7 +99,7 @@ async function handlePostRequest(request, context) {
                     role: "assistant",
                     content: reply,
                 });                
-                //context.log(JSON.stringify(context.conversation_history_dict));
+                context.log(JSON.stringify(context.conversation_history_dict));
                 if (sender==='instagram'){
                     context.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, idRecipient, reply);
