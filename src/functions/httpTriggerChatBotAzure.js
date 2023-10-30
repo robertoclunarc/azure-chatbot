@@ -5,7 +5,7 @@ app.http('httpTriggerChatBotAzure', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-        context.log(`La función HTTP procesó la solicitud de URL "${request.url}"`);
+        //context.log(`La función HTTP procesó la solicitud de URL "${request.url}"`);
         
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
@@ -52,7 +52,7 @@ async function handlePostRequest(request, context) {
 
         //////valida que no se ejecute dos veces el bot
         if (idRecipient !== process.env.serderIdVentaIntagram){
-            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram;
@@ -103,7 +103,7 @@ async function handlePostRequest(request, context) {
                 if (sender==='instagram'){
                     context.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, idRecipient, reply);
-                    context.log(responseData.data);
+                    //context.log(responseData.data);
                 }
             }else{
                 reply = 'No se puede procesar mensaje!';
