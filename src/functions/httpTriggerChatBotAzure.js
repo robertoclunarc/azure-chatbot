@@ -37,11 +37,11 @@ async function handlePostRequest(request, context) {
     try {
         const req = await request.text();
         const data = JSON.parse(req);        
-        const sender = data.object;
+        const object = data.object;
         
         var message;
         var idRecipient;
-        if (sender==='whatsapp'){
+        if (object==='whatsapp'){
             message = data.content;
             idRecipient = data?.idRecipient;
         }
@@ -64,7 +64,11 @@ async function handlePostRequest(request, context) {
                     content: message,
                 };
                 // Verifica si ya existe una conversación previa en el contexto
-                if (!context.conversation_history_dict) {
+                let primeraVez=false;
+                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${idRecipient}`;                
+                const conversation_history_dict = await axios.get(urlApiCrudChat);
+                if (conversation_history_dict?.messages.length===0) {
+                    primeraVez=true
                     context.conversation_history_dict = [];
                     const messages_init = {
                         role: "system",
@@ -100,11 +104,18 @@ async function handlePostRequest(request, context) {
                     content: reply,
                 });                
                 context.log(JSON.stringify(context.conversation_history_dict));
-                if (sender==='instagram'){
+                if (object==='instagram'){
                     context.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, idRecipient, reply);
                     //context.log(responseData.data);
                 }
+                ///Guarda conversacion
+                context.conversation_history_dict.forEach(function(hist, index) {                    
+                    
+                    guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime,idRecipient ,object);
+        
+                });
+
             }else{
                 reply = 'No se puede procesar mensaje!';
             }
@@ -125,6 +136,22 @@ async function handlePostRequest(request, context) {
             body: 'Error en el servicio: ' + error.message,
         };
     }
+}
+
+async function guardarConversacion(url, role, message, dateTime, sender, object){
+    const messages_init = {
+        role: role,
+        message: message,
+        date: dateTime,
+        sender: sender,
+        object: object,
+    };
+    try {
+        const guardar = await axios.post(url, messages_init, { 'Content-Type': 'application/json' });
+        console.log({mensajeSQL: guardar})
+    } catch (error) {
+        console.error(error);
+    }    
 }
 
 async function sendMessageToMessenger(context, idRecipient, message) {
