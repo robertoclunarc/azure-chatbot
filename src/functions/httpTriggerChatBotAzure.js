@@ -52,7 +52,7 @@ async function handlePostRequest(request, context) {
 
         //////valida que no se ejecute dos veces el bot
         if (idRecipient !== process.env.serderIdVentaIntagram){
-            //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram;
