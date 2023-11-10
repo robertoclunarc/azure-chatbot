@@ -67,7 +67,8 @@ async function handlePostRequest(request, context) {
                 let primeraVez=false;
                 const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${idRecipient}`;                
                 const conversation_history_dict = await axios.get(urlApiCrudChat);
-                if (conversation_history_dict?.messages.length===0) {
+                console.log(conversation_history_dict.data);
+                if (conversation_history_dict.data?.messages.length===0) {
                     primeraVez=true
                     context.conversation_history_dict = [];
                     const messages_init = {
