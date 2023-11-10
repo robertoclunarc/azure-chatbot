@@ -78,6 +78,10 @@ async function handlePostRequest(request, context) {
                     };
                     context.conversation_history_dict.push(messages_init);
                 }
+                else{
+                    context.conversation_history_dict = await conversation_history_dict;
+                }
+                
                 context.conversation_history_dict.push(reqUser);
 
                 const headers = {
@@ -113,8 +117,8 @@ async function handlePostRequest(request, context) {
                 }
                 ///Guarda conversacion
                 context.conversation_history_dict.forEach(async function(hist, index) {                    
-                    
-                    await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime,idRecipient ,object);
+                    context.log(hist);
+                    await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient ,object);
         
                 });
 
