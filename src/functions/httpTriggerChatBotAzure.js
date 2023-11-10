@@ -65,10 +65,11 @@ async function handlePostRequest(request, context) {
                 };
                 // Verifica si ya existe una conversación previa en el contexto
                 let primeraVez=false;
-                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${idRecipient}`;                
-                const conversation_history_dict = await axios.get(urlApiCrudChat);
-                console.log(conversation_history_dict.data);
-                if (conversation_history_dict.data?.messages.length===0) {
+                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${idRecipient}`;
+                const responseHistory= await axios.get(urlApiCrudChat);
+                const conversation_history_dict = responseHistory.data;
+                
+                if (conversation_history_dict?.messages.length===0) {
                     primeraVez=true
                     context.conversation_history_dict = [];
                     const messages_init = {
@@ -111,9 +112,9 @@ async function handlePostRequest(request, context) {
                     //context.log(responseData.data);
                 }
                 ///Guarda conversacion
-                context.conversation_history_dict.forEach(function(hist, index) {                    
+                context.conversation_history_dict.forEach(async function(hist, index) {                    
                     
-                    guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime,idRecipient ,object);
+                    await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime,idRecipient ,object);
         
                 });
 
@@ -149,7 +150,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     };
     try {
         const guardar = await axios.post(url, messages_init, { 'Content-Type': 'application/json' });
-        console.log({mensajeSQL: guardar})
+        console.log({mensajeSQL: guardar.data});
     } catch (error) {
         console.error(error);
     }    
