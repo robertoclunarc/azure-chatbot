@@ -118,11 +118,11 @@ async function handlePostRequest(request, context) {
                     //context.log(responseData.data);
                 }
                 ///Guarda conversacion
-                if (primeraVez){
-                    context.conversation_history_dict.forEach(async function(hist, index) {                    
+                if (primeraVez){                    
+                    for (const hist of context.conversation_history_dict) {
                         context.log(hist);
                         await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);
-                    });
+                    }
                 }else{
                     await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
                     await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
