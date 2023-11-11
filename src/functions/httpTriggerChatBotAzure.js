@@ -120,8 +120,8 @@ async function handlePostRequest(request, context) {
                 ///Guarda conversacion
                 if (primeraVez){
                     context.conversation_history_dict.forEach(async function(hist, index) {                    
-                        //context.log(hist);
-                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);        
+                        context.log(hist);
+                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);
                     });
                 }else{
                     await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
@@ -159,7 +159,8 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     };
     try {
         const guardar = await axios.post(url, messages_init, { 'Content-Type': 'application/json' });
-        console.log({mensajeSQL: guardar.data});
+        const responseData = guardar.data
+        console.log(stringify(responseData));
     } catch (error) {
         console.error(error);
     }    
