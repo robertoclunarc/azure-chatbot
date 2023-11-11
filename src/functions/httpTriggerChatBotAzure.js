@@ -84,9 +84,7 @@ async function handlePostRequest(request, context) {
                     
                     console.log(conversation_history_dict.messages[0].conversation_history);
                     context.conversation_history_dict = await conversation_history_dict.messages[0].conversation_history;
-                }
-                
-                
+                }                
 
                 const headers = {
                     'Content-Type': 'application/json',
@@ -109,23 +107,27 @@ async function handlePostRequest(request, context) {
 
                 const OpenAiResponse = response.data;
                 reply = OpenAiResponse.choices[0].message.content;
-                context.conversation_history_dict.push({
+                const responseAssitant = {
                     role: "assistant",
                     content: reply,
-                });                
-                context.log(JSON.stringify(context.conversation_history_dict));
+                }
+                context.conversation_history_dict.push(responseAssitant);                
+                //context.log(JSON.stringify(context.conversation_history_dict));
                 if (object==='instagram'){
                     context.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, idRecipient, reply);
                     //context.log(responseData.data);
                 }
                 ///Guarda conversacion
-                context.conversation_history_dict.forEach(async function(hist, index) {                    
-                    context.log(hist);
-                    await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient ,object);
-        
-                });
-
+                if (primeraVez){
+                    context.conversation_history_dict.forEach(async function(hist, index) {                    
+                        context.log(hist);
+                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);        
+                    });
+                }else{
+                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
+                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
+                }
             }else{
                 reply = 'No se puede procesar mensaje!';
             }
