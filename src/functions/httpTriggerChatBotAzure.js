@@ -97,12 +97,12 @@ async function handlePostRequest(request, context) {
 
                 const requestBody = JSON.stringify({
                     "messages": context.conversation_history_dict,
-                    "max_tokens": 1000,
+                    /*"max_tokens": 1000,
                     "temperature": 0.5,
                     "frequency_penalty": 0,
                     "presence_penalty": 0,
                     "top_p": 0.95,
-                    "stop": null,
+                    "stop": null,*/
                 });
 
                 const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
