@@ -82,8 +82,8 @@ async function handlePostRequest(request, context) {
                 else{
                     conversation_history_dict.messages[0].conversation_history.push(reqUser);
                     
-                    console.log(conversation_history_dict);
-                    context.conversation_history_dict = await conversation_history_dict;
+                    console.log(conversation_history_dict.messages[0].conversation_history);
+                    context.conversation_history_dict = await conversation_history_dict.messages[0].conversation_history;
                 }
                 
                 
@@ -97,12 +97,12 @@ async function handlePostRequest(request, context) {
 
                 const requestBody = JSON.stringify({
                     "messages": context.conversation_history_dict,
-                    /*"max_tokens": 1000,
+                    "max_tokens": 1000,
                     "temperature": 0.5,
                     "frequency_penalty": 0,
                     "presence_penalty": 0,
                     "top_p": 0.95,
-                    "stop": null,*/
+                    "stop": null,
                 });
 
                 const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
