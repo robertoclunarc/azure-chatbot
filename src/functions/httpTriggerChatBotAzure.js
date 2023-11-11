@@ -80,11 +80,10 @@ async function handlePostRequest(request, context) {
                     context.conversation_history_dict.push(reqUser);
                 }
                 else{
-                    conversation_history_dict.messages[0].conversation_history.push(reqUser);
-                    
-                    console.log(conversation_history_dict.messages[0].conversation_history);
+                    conversation_history_dict.messages[0].conversation_history.push(reqUser);                    
+                    //console.log(conversation_history_dict.messages[0].conversation_history);
                     context.conversation_history_dict = await conversation_history_dict.messages[0].conversation_history;
-                }                
+                }
 
                 const headers = {
                     'Content-Type': 'application/json',
@@ -121,12 +120,12 @@ async function handlePostRequest(request, context) {
                 ///Guarda conversacion
                 if (primeraVez){
                     context.conversation_history_dict.forEach(async function(hist, index) {                    
-                        context.log(hist);
+                        //context.log(hist);
                         await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);        
                     });
                 }else{
-                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
-                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
+                    guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
+                    guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
                 }
             }else{
                 reply = 'No se puede procesar mensaje!';
