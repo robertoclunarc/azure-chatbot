@@ -77,12 +77,16 @@ async function handlePostRequest(request, context) {
                         content: prompt
                     };
                     context.conversation_history_dict.push(messages_init);
+                    context.conversation_history_dict.push(reqUser);
                 }
                 else{
+                    conversation_history_dict.messages[0].conversation_history.push(reqUser);
+                    
+                    console.log(conversation_history_dict);
                     context.conversation_history_dict = await conversation_history_dict;
                 }
                 
-                context.conversation_history_dict.push(reqUser);
+                
 
                 const headers = {
                     'Content-Type': 'application/json',
