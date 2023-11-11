@@ -124,8 +124,8 @@ async function handlePostRequest(request, context) {
                         await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);        
                     });
                 }else{
-                    guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
-                    guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
+                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
+                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
                 }
             }else{
                 reply = 'No se puede procesar mensaje!';
