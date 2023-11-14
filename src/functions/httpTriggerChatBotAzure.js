@@ -176,15 +176,15 @@ async function sendMessageToMessenger(context, idRecipient, message) {
             text: message,
             quick_replies:[
                 {
-                  "content_type":"text",
-                  "title":"Red",
-                  "payload":"<POSTBACK_PAYLOAD>",
-                  "image_url":"https://coloress.org/wp-content/uploads/2018/02/Orange.jpg"
+                  content_type:"text",
+                  title:"Red",
+                  payload:"<POSTBACK_PAYLOAD>",
+                  image_url:"https://coloress.org/wp-content/uploads/2018/02/Orange.jpg"
                 },{
-                  "content_type":"text",
-                  "title":"Green",
-                  "payload":"<POSTBACK_PAYLOAD>",
-                  "image_url":"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
+                  content_type:"text",
+                  title:"Green",
+                  payload:"<POSTBACK_PAYLOAD>",
+                  image_url:"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
                 }
               ]
         },
