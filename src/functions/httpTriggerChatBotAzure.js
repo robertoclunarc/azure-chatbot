@@ -174,19 +174,19 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         messaging_type: "RESPONSE",
         message: {
             text: message,
-            quick_replies: [
+            quick_replies:[
                 {
-                  content_type: 'text',
-                  title: 'Botón 1',
-                  payload: 'BOTON_1_PAYLOAD'
-                },
-                {
-                  content_type: 'text',
-                  title: 'Botón 2',
-                  payload: 'BOTON_2_PAYLOAD'
+                  "content_type":"text",
+                  "title":"Red",
+                  "payload":"<POSTBACK_PAYLOAD>",
+                  "image_url":"https://coloress.org/wp-content/uploads/2018/02/Orange.jpg"
+                },{
+                  "content_type":"text",
+                  "title":"Green",
+                  "payload":"<POSTBACK_PAYLOAD>",
+                  "image_url":"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
                 }
-                // Agrega más botones según sea necesario
-              ],
+              ]
         },
       };
     
