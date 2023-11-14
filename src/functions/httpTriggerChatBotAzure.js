@@ -178,12 +178,12 @@ async function sendMessageToMessenger(context, idRecipient, message) {
                 {
                   content_type:"text",
                   title:"Red",
-                  payload:"1",
+                  payload:"si",
                   //image_url:"https://coloress.org/wp-content/uploads/2018/02/Orange.jpg"
                 },{
                   content_type:"text",
                   title:"Green",
-                  payload:"2",
+                  payload:"no",
                   //image_url:"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
                 }
               ]
