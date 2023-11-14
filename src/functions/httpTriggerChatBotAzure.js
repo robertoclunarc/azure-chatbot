@@ -171,7 +171,22 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const LATEST_API_VERSION = "v18.0";    
     const body = {
         recipient: { id: idRecipient },
-        message: { text: message+'<button type="button">Botón</button>'},
+        message: { 
+            text: message,
+            quick_replies: [
+                {
+                  content_type: 'text',
+                  title: 'Botón 1',
+                  payload: 'BOTON_1_PAYLOAD'
+                },
+                {
+                  content_type: 'text',
+                  title: 'Botón 2',
+                  payload: 'BOTON_2_PAYLOAD'
+                }
+                // Agrega más botones según sea necesario
+              ]
+        },
       };
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
