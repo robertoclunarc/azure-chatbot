@@ -120,7 +120,7 @@ async function handlePostRequest(request, context) {
                 ///Guarda conversacion
                 if (primeraVez){                    
                     for (const hist of context.conversation_history_dict) {
-                        context.log(hist);
+                        //context.log(hist);
                         await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);
                     }
                 }else{
@@ -176,15 +176,15 @@ async function sendMessageToMessenger(context, idRecipient, message) {
             text: message,
             quick_replies:[
                 {
-                  content_type:"text",
-                  title:"Red",
-                  payload:"1",
-                  image_url:"https://coloress.org/wp-content/uploads/2018/02/Orange.jpg"
+                  content_type:'text',
+                  title:'Red',
+                  payload:'1',
+                  //image_url:'https://coloress.org/wp-content/uploads/2018/02/Orange.jpg'
                 },{
-                  content_type:"text",
-                  title:"Green",
-                  payload:"2",
-                  image_url:"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
+                  content_type:'text',
+                  title:'Green',
+                  payload:'2',
+                  //image_url:"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
                 }
             ]
         },
