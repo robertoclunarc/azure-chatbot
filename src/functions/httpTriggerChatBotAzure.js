@@ -52,7 +52,7 @@ async function handlePostRequest(request, context) {
 
         //////valida que no se ejecute dos veces el bot
         if (idRecipient !== process.env.serderIdVentaIntagram){
-            context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+            //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram;
@@ -160,7 +160,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     try {
         const guardar = await axios.post(url, messages_init, { 'Content-Type': 'application/json' });
         const responseData = guardar.data
-        console.log(stringify(responseData));
+        console.log(JSON.stringify(responseData));
     } catch (error) {
         console.error(error);
     }    
@@ -171,7 +171,8 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const LATEST_API_VERSION = "v18.0";    
     const body = {
         recipient: { id: idRecipient },
-        message: { 
+        messaging_type: "RESPONSE",
+        message: {
             text: message,
             quick_replies: [
                 {
@@ -185,7 +186,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
                   payload: 'BOTON_2_PAYLOAD'
                 }
                 // Agrega más botones según sea necesario
-              ]
+              ],
         },
       };
     
