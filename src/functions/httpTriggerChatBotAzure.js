@@ -159,8 +159,8 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     };
     try {
         const guardar = await axios.post(url, messages_init, { 'Content-Type': 'application/json' });
-        const responseData = guardar.data
-        console.log(JSON.stringify(responseData));
+        //const responseData = guardar.data
+        //console.log(JSON.stringify(responseData));
     } catch (error) {
         console.error(error);
     }    
@@ -171,21 +171,20 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const LATEST_API_VERSION = "v18.0";    
     const body = {
         recipient: { id: idRecipient },
-        messaging_type: "RESPONSE",
+        //messaging_type: "RESPONSE",
         message: {
             text: message,
-            quick_replies:[
+            quick_replies: [
                 {
-                  content_type:'text',
-                  title:'Red',
-                  payload:'1',
-                  //image_url:'https://coloress.org/wp-content/uploads/2018/02/Orange.jpg'
-                },{
-                  content_type:'text',
-                  title:'Green',
-                  payload:'2',
-                  //image_url:"https://coloress.org/wp-content/uploads/2018/01/GREEN-INTENSO-009900-300x138.jpg"
-                }
+                  content_type: 'text',
+                  title: 'Boton 1',
+                  payload: 'BOTON_1_PAYLOAD'
+                },
+                {
+                  content_type: 'text',
+                  title: 'Boton 2',
+                  payload: 'BOTON_2_PAYLOAD'
+                }                
             ]
         },
       };
