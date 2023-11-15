@@ -171,19 +171,19 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     const LATEST_API_VERSION = "v18.0";    
     const body = {
         recipient: { id: idRecipient },
-        //messaging_type: "RESPONSE",
+        messaging_type: "RESPONSE",
         message: {
             text: message,
             quick_replies: [
                 {
-                  content_type: 'text',
-                  title: 'Boton 1',
-                  payload: 'BOTON_1_PAYLOAD'
+                  content_type: "text",
+                  title: "Boton 1",
+                  payload: "BOTON_1_PAYLOAD"
                 },
                 {
-                  content_type: 'text',
-                  title: 'Boton 2',
-                  payload: 'BOTON_2_PAYLOAD'
+                  content_type: "text",
+                  title: "Boton 2",
+                  payload: "BOTON_2_PAYLOAD"
                 }                
             ]
         },
