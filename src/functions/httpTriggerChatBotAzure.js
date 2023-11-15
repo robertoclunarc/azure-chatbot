@@ -174,20 +174,20 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         messaging_type: "RESPONSE",
         message: {
             text: message,
-            quick_replies: [
+            "quick_replies": [
                 {
-                  content_type: "text",
-                  title: "Si",
-                  payload: "BOTON1"
+                  "content_type": "text",
+                  "title": "Si",
+                  "payload": "BOTON1"
                 },
                 {
-                  content_type: "text",
-                  title: "No",
-                  payload: "BOTON2"
+                  "content_type": "text",
+                  "title": "No",
+                  "payload": "BOTON2"
                 }                
             ]
         },
-      };
+    };
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
     //context.log(URLInstagram);    
