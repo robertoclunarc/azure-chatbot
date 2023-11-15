@@ -114,7 +114,7 @@ async function handlePostRequest(request, context) {
                 //context.log(JSON.stringify(context.conversation_history_dict));
                 if (object==='instagram'){
                     context.log('Intentando enviar a instagram...');
-                    const responseData = await sendMessageToMessenger(context, idRecipient, reply);
+                    const responseData = await sendMessageToMessenger(context, idRecipient, reply, message);
                     //context.log(responseData.data);
                 }
                 ///Guarda conversacion
@@ -166,15 +166,18 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToMessenger(context, idRecipient, message) {
+async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-    const LATEST_API_VERSION = "v18.0";    
+    const LATEST_API_VERSION = "v18.0";
+    const afirmativo = await  buscarAfirmacion(msgUser, "si");
+    context.log(`afirmacion: ${afirmativo}`);
+    const replies = afirmativo ? "\n Desea hablar con un agente? \n1. Si\n2. No" : "";
     const body = {
         recipient: { id: idRecipient },
         messaging_type: "RESPONSE",
         message: {
-            text: message,
-            quick_replies: [
+            text: message + replies,
+            quick_replies: replies!=="" ? [
                 {
                   content_type: "text",
                   title: "Si",
@@ -185,7 +188,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
                   title: "No",
                   payload: "BOTON2"
                 }                
-            ]
+            ] : []
         },
     };
     
@@ -202,6 +205,23 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     } catch (error) {
         context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
         return null;
+    }
+}
+
+async function buscarAfirmacion(frase, buscar) {
+    try {
+      // Convertir toda la frase y la palabra buscada a minúsculas
+      const fraseMinusculas = frase.toLowerCase();      
+  
+      // Crear una expresión regular para buscar la palabra completa
+      const expresionRegular = new RegExp(`\\b${buscar}\\b`, 'i');
+  
+      // Verificar si la palabra está presente en la frase
+      const resultado = expresionRegular.test(fraseMinusculas);
+  
+      return resultado;
+    } catch (error) {
+      throw new Error('Error en la función buscarPalabraEnFrase: ' + error.message);
     }
 }
 
