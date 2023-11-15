@@ -177,13 +177,13 @@ async function sendMessageToMessenger(context, idRecipient, message) {
             quick_replies: [
                 {
                   content_type: "text",
-                  title: "Boton 1",
-                  payload: "BOTON_1_PAYLOAD"
+                  title: "Si",
+                  payload: "BOTON1"
                 },
                 {
                   content_type: "text",
-                  title: "Boton 2",
-                  payload: "BOTON_2_PAYLOAD"
+                  title: "No",
+                  payload: "BOTON2"
                 }                
             ]
         },
@@ -191,7 +191,7 @@ async function sendMessageToMessenger(context, idRecipient, message) {
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
     //context.log(URLInstagram);    
-    //context.log(body);
+    context.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {'Content-Type': 'application/json'});
         return responseData;
