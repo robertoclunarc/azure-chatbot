@@ -174,16 +174,16 @@ async function sendMessageToMessenger(context, idRecipient, message) {
         messaging_type: "RESPONSE",
         message: {
             text: message,
-            "quick_replies": [
+            quick_replies: [
                 {
-                  "content_type": "text",
-                  "title": "Si",
-                  "payload": "BOTON1"
+                  content_type: "text",
+                  title: "Si",
+                  payload: "BOTON1"
                 },
                 {
-                  "content_type": "text",
-                  "title": "No",
-                  "payload": "BOTON2"
+                  content_type: "text",
+                  title: "No",
+                  payload: "BOTON2"
                 }                
             ]
         },
