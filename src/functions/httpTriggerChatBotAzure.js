@@ -42,7 +42,7 @@ async function validPostRequest(request, context) {
         }
         */
         // Verifica si el mensaje contiene información sobre la selección del usuario
-        if (data.message && data.message.quick_reply) {
+        if (data?.message && data?.message?.quick_reply) {
             const payload = data.message.quick_reply.payload;
 
             // Realiza acciones basadas en el payload
