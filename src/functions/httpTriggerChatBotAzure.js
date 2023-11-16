@@ -188,7 +188,7 @@ async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
                   title: "No",
                   payload: "BOTON2"
                 }                
-            ] : []
+            ] : undefined
         },
     };
     
