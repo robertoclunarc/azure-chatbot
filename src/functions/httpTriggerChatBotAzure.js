@@ -26,7 +26,9 @@ async function validPostRequest(request, context) {
     try {
         const req = await request.text();
         const data = JSON.parse(req);
-        const object = data.object;
+        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        /*
+        const object = data.object;        
         
         var message;
         //var idRecipient;
@@ -38,6 +40,7 @@ async function validPostRequest(request, context) {
             //idRecipient = data.entry[0].messaging[0].sender.id;
             message = data.entry[0].messaging[0].message.text;
         }
+        */
         // Verifica si el mensaje contiene información sobre la selección del usuario
         if (data.message && data.message.quick_reply) {
             const payload = data.message.quick_reply.payload;
