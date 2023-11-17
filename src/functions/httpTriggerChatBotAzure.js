@@ -11,6 +11,7 @@ app.http('httpTriggerChatBotAzure', {
             return handleGetRequest(request, context);
         } else {
             const requestValid = await validPostRequest(request, context);
+            consolet.log(requestValid);
             if ((requestValid?.quick_reply && requestValid?.payload==='1') || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
                 
                 context.log("Quick reply detectado, realizar acción correspondiente...");
@@ -46,26 +47,19 @@ async function validPostRequest(request, context) {
         }
 
         const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
-        
-        if (reply) {
-            
-            
-                context.log(`payload: ${reply}`);                
-            
-        }
 
         const contenido = {
             object: data.object,
             idRecipient: idRecipient,
             message: message,
-            //quick_reply: reply,
-            //payload: reply?.payload,
+            quick_reply: reply,
+            payload: reply?.payload,
             conversation_history_dict: [],
             res:{                    
                 body: 'idRecipient: ' + idRecipient,
             },
         }
-        context.log(contenido);
+        
         return contenido;
     } catch (error) {
         context.error(`Error en el servicio validPostRequest: ${error}`);
@@ -96,7 +90,7 @@ async function handleGetRequest(request, context) {
 }
 
 async function handlePostRequest(contenido) {
-    var context = contenido;
+    var context = await contenido;
     try {
         //////valida que no se ejecute dos veces el bot
         //if (idRecipient !== process.env.serderIdVentaIntagram){
@@ -111,9 +105,10 @@ async function handlePostRequest(contenido) {
                     role: "user",
                     content: context.message,
                 };
-                // Verifica si ya existe una conversación previa en el contexto
+                
                 let primeraVez=false;
                 const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${context.idRecipient}`;
+                console.log(urlApiCrudChat);
                 const responseHistory= await axios.get(urlApiCrudChat);
                 const conversation_history_dict = responseHistory.data;
                 
@@ -149,7 +144,7 @@ async function handlePostRequest(contenido) {
                     "top_p": 0.95,
                     "stop": null,
                 });
-
+                console.log(requestBody);
                 const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
 
                 const OpenAiResponse = response.data;
@@ -159,7 +154,7 @@ async function handlePostRequest(contenido) {
                     content: reply,
                 }
                 context.conversation_history_dict.push(responseAssitant);                
-                //context.log(JSON.stringify(context.conversation_history_dict));
+                console.log(JSON.stringify(context.conversation_history_dict));
                 if (object==='instagram'){
                     console.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
