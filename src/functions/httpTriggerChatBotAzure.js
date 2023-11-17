@@ -10,14 +10,15 @@ app.http('httpTriggerChatBotAzure', {
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
-            const quickReplyDetected = await validPostRequest(request, context);
-            /*if (quickReplyDetected) {
+            const requestValid = await validPostRequest(request, context);
+            if ((requestValid?.quick_reply && requestValid?.payload==='1') || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
                 
                 context.log("Quick reply detectado, realizar acción correspondiente...");
+                return
             } else {
-                // Realiza otras acciones si no hay quick reply
-            }*/
-           // return handlePostRequest(request, context);
+                return handlePostRequest(requestValid);
+            }
+            
         }
     }
 });
@@ -25,30 +26,48 @@ app.http('httpTriggerChatBotAzure', {
 async function validPostRequest(request, context) {
     try {
         const req = await request.text();
-        context.log(`Datos del request: ${JSON.stringify(req)}`);
-        if (!request.body || typeof request.body !== 'string') {
-            context.log('La solicitud no contiene un cuerpo de texto válido.');
-            return false;
-        }
-
-        const data = JSON.parse(request.body);
+        const data = JSON.parse(req);        
+        const object = data.object;
         context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
-
-        if (data?.message && data?.message?.quick_reply) {
-            const payload = data.message.quick_reply.payload;
-            if (payload === '1' || payload === '2') {
-                context.log(`payload: ${payload}`);
-                return true;
-            }
+        var message;
+        var idRecipient;
+        if (object==='whatsapp'){
+            message = data.content;
+            idRecipient = data?.idRecipient;
         }
-        return false;
+        else{
+            idRecipient = data.entry[0].messaging[0].sender.id;
+            message = data.entry[0].messaging[0].message.text;
+        }
+
+        var payload;
+        if (data?.message && data?.message?.quick_reply) {
+            payload = data.message.quick_reply.payload;
+            
+                context.log(`payload: ${payload}`);                
+            
+        }
+
+        const contenido = {
+            object: data.object,
+            idRecipient: idRecipient,
+            message: message,
+            quick_reply: data?.message?.quick_reply,
+            payload: payload,
+            conversation_history_dict: [],
+            res:{                    
+                body: 'idRecipient: ' + idRecipient,
+            },
+        }
+        context.log(contenido);
+        return contenido;
     } catch (error) {
         context.error(`Error en el servicio: ${error}`);
         context.res = {
             status: 500,
             body: 'Error en el servicio: ' + error.message,
         };
-        return false;
+        return context.res;
     }
 }
 
@@ -70,26 +89,12 @@ async function handleGetRequest(request, context) {
     return context.res;
 }
 
-async function handlePostRequest(request, context) {
+async function handlePostRequest(contenido) {
+    var context = contenido;
     try {
-        const req = await request.text();
-        const data = JSON.parse(req);        
-        const object = data.object;
-        
-        var message;
-        var idRecipient;
-        if (object==='whatsapp'){
-            message = data.content;
-            idRecipient = data?.idRecipient;
-        }
-        else{
-            idRecipient = data.entry[0].messaging[0].sender.id;
-            message = data.entry[0].messaging[0].message.text;
-        }
-
         //////valida que no se ejecute dos veces el bot
-        if (idRecipient !== process.env.serderIdVentaIntagram){
-            //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        //if (idRecipient !== process.env.serderIdVentaIntagram){
+            
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram;
@@ -108,7 +113,7 @@ async function handlePostRequest(request, context) {
                 
                 if (conversation_history_dict?.messages.length===0) {
                     primeraVez=true
-                    context.conversation_history_dict = [];
+                    //context.conversation_history_dict = [];
                     const messages_init = {
                         role: "system",
                         content: prompt
@@ -150,9 +155,9 @@ async function handlePostRequest(request, context) {
                 context.conversation_history_dict.push(responseAssitant);                
                 //context.log(JSON.stringify(context.conversation_history_dict));
                 if (object==='instagram'){
-                    context.log('Intentando enviar a instagram...');
+                    console.log('Intentando enviar a instagram...');
                     const responseData = await sendMessageToMessenger(context, idRecipient, reply, message);
-                    //context.log(responseData.data);
+                    //console.log(responseData.data);
                 }
                 ///Guarda conversacion
                 if (primeraVez){                    
@@ -170,16 +175,16 @@ async function handlePostRequest(request, context) {
             context.res = {
                 body: reply,
             };
-        }else{
+        /*}else{
             context.res = {                    
                 body: 'idRecipient: ' + idRecipient,
             };
-        }
+        }*/
         return context.res;
     } catch (error) {
-        context.error(`Error en el servicio:  ${error}`);
-        context.error(`Detalle Error:  ${error.message}`);
-        context.res = {
+        console.error(`Error en el servicio:  ${error}`);
+        console.error(`Detalle Error:  ${error.message}`);
+        console.res = {
             status: 500,
             body: 'Error en el servicio: ' + error.message,
         };
@@ -207,7 +212,7 @@ async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
     const afirmativo = await  buscarAfirmacion(msgUser, "si");
-    context.log(`afirmacion: ${afirmativo}`);
+    console.log(`afirmacion: ${afirmativo}`);
     const replies = afirmativo ? "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No" : "";
     const body = {
         recipient: { id: idRecipient },
@@ -230,8 +235,8 @@ async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
     };
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
-    //context.log(URLInstagram);    
-    context.log(body);
+    //console.log(URLInstagram);    
+    console.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {
             headers: {
@@ -240,7 +245,7 @@ async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
         });
         return responseData;
     } catch (error) {
-        context.error(`Error al enviar mensaje a Messenger: ${error.message}`);
+        console.error(`Error al enviar mensaje a Messenger: ${error.message}`);
         return null;
     }
 }
