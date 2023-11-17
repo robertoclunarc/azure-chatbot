@@ -24,7 +24,8 @@ app.http('httpTriggerChatBotAzure', {
 
 async function validPostRequest(request, context) {
     try {
-        context.log(`Datos del request: ${JSON.stringify(request)}`);
+        const req = await request.text();
+        context.log(`Datos del request: ${JSON.stringify(req)}`);
         if (!request.body || typeof request.body !== 'string') {
             context.log('La solicitud no contiene un cuerpo de texto válido.');
             return false;
