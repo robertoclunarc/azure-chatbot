@@ -39,10 +39,10 @@ async function validPostRequest(request, context) {
             idRecipient = data.entry[0].messaging[0].sender.id;
             message = data.entry[0].messaging[0].message.text;
         }
-
+        const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
         var payload;
-        if (data?.message && data?.message?.quick_reply) {
-            payload = data.message.quick_reply.payload;
+        if (reply) {
+            payload = reply;
             
                 context.log(`payload: ${payload}`);                
             
