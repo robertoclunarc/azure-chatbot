@@ -154,10 +154,11 @@ async function handlePostRequest(contenido) {
                     content: reply,
                 }
                 context.conversation_history_dict.push(responseAssitant);                
-                console.log(JSON.stringify(context.conversation_history_dict));
-                if (object==='instagram'){
+                //console.log(JSON.stringify(context.conversation_history_dict));
+                if (context.object==='instagram'){
                     console.log('Intentando enviar a instagram...');
-                    const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
+                    //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
+                    const responseData = await sendMessageToMessenger(context, reply);
                     //console.log(responseData.data);
                 }
                 ///Guarda conversacion
@@ -209,17 +210,17 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToMessenger(context, idRecipient, message, msgUser) {
+async function sendMessageToMessenger(context,reply) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
-    const afirmativo = await  buscarAfirmacion(msgUser, "si");
+    const afirmativo = await  buscarAfirmacion(context.message, "si");
     console.log(`afirmacion: ${afirmativo}`);
     const replies = afirmativo ? "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No" : "";
     const body = {
-        recipient: { id: idRecipient },
+        recipient: { id: context.idRecipient },
         messaging_type: "RESPONSE",
         message: {
-            text: message + replies,
+            text: reply + replies,
             quick_replies: replies!=="" ? [
                 {
                   content_type: "text",
