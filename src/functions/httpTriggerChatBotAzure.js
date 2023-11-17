@@ -11,7 +11,7 @@ app.http('httpTriggerChatBotAzure', {
             return handleGetRequest(request, context);
         } else {
             const requestValid = await validPostRequest(request, context);
-            consolet.log(requestValid);
+            console.log(requestValid);
             if ((requestValid?.quick_reply && requestValid?.payload==='1') || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
                 
                 context.log("Quick reply detectado, realizar acción correspondiente...");
