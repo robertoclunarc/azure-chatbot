@@ -68,7 +68,7 @@ async function validPostRequest(request, context) {
         context.log(contenido);
         return contenido;
     } catch (error) {
-        context.error(`Error en el servicio: ${error}`);
+        context.error(`Error en el servicio validPostRequest: ${error}`);
         context.res = {
             status: 500,
             body: 'Error en el servicio: ' + error.message,
@@ -106,14 +106,14 @@ async function handlePostRequest(contenido) {
             const prompt = process.env.promptVentasInstagram;
            
             var reply = '';
-            if (message!==undefined && message!==''){
+            if (context.message!==undefined && context.message!==''){
                 const reqUser = {
                     role: "user",
-                    content: message,
+                    content: context.message,
                 };
                 // Verifica si ya existe una conversación previa en el contexto
                 let primeraVez=false;
-                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${idRecipient}`;
+                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${context.idRecipient}`;
                 const responseHistory= await axios.get(urlApiCrudChat);
                 const conversation_history_dict = responseHistory.data;
                 
@@ -162,18 +162,18 @@ async function handlePostRequest(contenido) {
                 //context.log(JSON.stringify(context.conversation_history_dict));
                 if (object==='instagram'){
                     console.log('Intentando enviar a instagram...');
-                    const responseData = await sendMessageToMessenger(context, idRecipient, reply, message);
+                    const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
                     //console.log(responseData.data);
                 }
                 ///Guarda conversacion
                 if (primeraVez){                    
                     for (const hist of context.conversation_history_dict) {
                         //context.log(hist);
-                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, idRecipient, object);
+                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, context.idRecipient, context.object);
                     }
                 }else{
-                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, idRecipient, object);
-                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, idRecipient, object);
+                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);
+                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
                 }
             }else{
                 reply = 'No se puede procesar mensaje!';
@@ -188,7 +188,7 @@ async function handlePostRequest(contenido) {
         }*/
         return context.res;
     } catch (error) {
-        console.error(`Error en el servicio:  ${error}`);
+        console.error(`Error en el servicio handlePostRequest:  ${error}`);
         console.error(`Detalle Error:  ${error.message}`);
         console.res = {
             status: 500,
