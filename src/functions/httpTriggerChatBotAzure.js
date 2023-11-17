@@ -11,7 +11,7 @@ app.http('httpTriggerChatBotAzure', {
             return handleGetRequest(request, context);
         } else {
             const requestValid = await validPostRequest(request, context);
-            console.log(requestValid);
+            context.log(requestValid);
             if ((requestValid?.quick_reply && requestValid?.payload==='1') || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
                 
                 context.log("Quick reply detectado, realizar acción correspondiente...");
@@ -108,7 +108,7 @@ async function handlePostRequest(contenido) {
                 
                 let primeraVez=false;
                 const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${context.idRecipient}`;
-                console.log(urlApiCrudChat);
+                //console.log(urlApiCrudChat);
                 const responseHistory= await axios.get(urlApiCrudChat);
                 const conversation_history_dict = responseHistory.data;
                 
@@ -144,7 +144,7 @@ async function handlePostRequest(contenido) {
                     "top_p": 0.95,
                     "stop": null,
                 });
-                console.log(requestBody);
+                //console.log(requestBody);
                 const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
 
                 const OpenAiResponse = response.data;
@@ -238,7 +238,7 @@ async function sendMessageToMessenger(context,reply) {
     
     const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
     //console.log(URLInstagram);    
-    console.log(body);
+    //console.log(body);
     try {
         const responseData = await axios.post(URLInstagram, body, {
             headers: {
