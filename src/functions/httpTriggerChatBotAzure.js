@@ -24,38 +24,22 @@ app.http('httpTriggerChatBotAzure', {
 
 async function validPostRequest(request, context) {
     try {
-        const req = await request.text();
-        const data = JSON.parse(req);
-        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
-        /*
-        const object = data.object;        
-        
-        var message;
-        //var idRecipient;
-        if (object==='whatsapp'){
-            message = data.content;
-            //idRecipient = data?.idRecipient;
+        context.log(`Datos del request: ${JSON.stringify(request)}`);
+        if (!request.body || typeof request.body !== 'string') {
+            context.log('La solicitud no contiene un cuerpo de texto válido.');
+            return false;
         }
-        else{
-            //idRecipient = data.entry[0].messaging[0].sender.id;
-            message = data.entry[0].messaging[0].message.text;
-        }
-        */
-        // Verifica si el mensaje contiene información sobre la selección del usuario
-        if (data?.entry[0]?.messaging[0]?.quick_reply) {
-            const payload = data.message.quick_reply.payload;
 
-            // Realiza acciones basadas en el payload
+        const data = JSON.parse(request.body);
+        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+
+        if (data?.message && data?.message?.quick_reply) {
+            const payload = data.message.quick_reply.payload;
             if (payload === '1' || payload === '2') {
-                // El usuario presionó uno de los botones
-                // Realiza la lógica correspondiente
                 context.log(`payload: ${payload}`);
-                // Devuelve true indicando que se detectó un quick reply
                 return true;
             }
         }
-
-        // Devuelve false si no se detecta quick reply
         return false;
     } catch (error) {
         context.error(`Error en el servicio: ${error}`);
@@ -63,7 +47,6 @@ async function validPostRequest(request, context) {
             status: 500,
             body: 'Error en el servicio: ' + error.message,
         };
-        // Devuelve false en caso de error
         return false;
     }
 }
