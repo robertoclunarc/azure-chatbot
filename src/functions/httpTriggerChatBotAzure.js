@@ -40,11 +40,11 @@ async function validPostRequest(request, context) {
             message = data.entry[0].messaging[0].message.text;
         }
         const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
-        var payload;
+        
         if (reply) {
-            payload = reply;
             
-                context.log(`payload: ${payload}`);                
+            
+                context.log(`payload: ${reply}`);                
             
         }
 
@@ -52,8 +52,8 @@ async function validPostRequest(request, context) {
             object: data.object,
             idRecipient: idRecipient,
             message: message,
-            quick_reply: data?.message?.quick_reply,
-            payload: payload,
+            quick_reply: reply,
+            payload: reply.payload,
             conversation_history_dict: [],
             res:{                    
                 body: 'idRecipient: ' + idRecipient,
