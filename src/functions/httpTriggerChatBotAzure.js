@@ -32,12 +32,12 @@ async function validPostRequest(request, context) {
         var message;
         var idRecipient;
         if (object==='whatsapp'){
-            message = data.content;
+            message = data?.content;
             idRecipient = data?.idRecipient;
         }
         else{
-            idRecipient = data.entry[0].messaging[0].sender.id;
-            message = data.entry[0].messaging[0].message.text;
+            idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
+            message = data?.entry[0]?.messaging[0]?.message?.text;
         }
         const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
         
@@ -53,7 +53,7 @@ async function validPostRequest(request, context) {
             idRecipient: idRecipient,
             message: message,
             quick_reply: reply,
-            payload: reply.payload,
+            payload: reply?.payload,
             conversation_history_dict: [],
             res:{                    
                 body: 'idRecipient: ' + idRecipient,
