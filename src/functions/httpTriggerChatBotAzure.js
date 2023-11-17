@@ -17,7 +17,7 @@ app.http('httpTriggerChatBotAzure', {
             } else {
                 // Realiza otras acciones si no hay quick reply
             }*/
-            return handlePostRequest(request, context);
+           // return handlePostRequest(request, context);
         }
     }
 });
