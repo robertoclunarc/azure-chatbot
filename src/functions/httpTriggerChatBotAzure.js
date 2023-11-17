@@ -25,6 +25,7 @@ app.http('httpTriggerChatBotAzure', {
 
 async function validPostRequest(request, context) {
     try {
+        
         const req = await request.text();
         const data = JSON.parse(req);        
         const object = data.object;
@@ -39,7 +40,12 @@ async function validPostRequest(request, context) {
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             message = data?.entry[0]?.messaging[0]?.message?.text;
         }
-        /*const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
+
+        if (idRecipient === process.env.serderIdVentaIntagram){
+            return { idRecipient : process.env.serderIdVentaIntagram }
+        }
+
+        const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
         
         if (reply) {
             
@@ -47,7 +53,7 @@ async function validPostRequest(request, context) {
                 context.log(`payload: ${reply}`);                
             
         }
-*/
+
         const contenido = {
             object: data.object,
             idRecipient: idRecipient,
