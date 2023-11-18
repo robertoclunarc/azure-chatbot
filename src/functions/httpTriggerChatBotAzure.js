@@ -153,12 +153,16 @@ async function handlePostRequest(contenido) {
                     role: "assistant",
                     content: reply,
                 }
-                context.conversation_history_dict.push(responseAssitant);                
-                //console.log(JSON.stringify(context.conversation_history_dict));
+                context.conversation_history_dict.push(responseAssitant);
+                
+                const afirmativo = await  buscarAfirmacion(context.message, "si");
+                console.log(`afirmacion: ${afirmativo}`);
+                const replies = afirmativo ? "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No" : "";
+                
                 if (context.object==='instagram'){
                     console.log('Intentando enviar a instagram...');
                     //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
-                    const responseData = await sendMessageToMessenger(context, reply);
+                    const responseData = await sendMessageToMessenger(context, reply, replies);
                     //console.log(responseData.data);
                 }
                 ///Guarda conversacion
@@ -168,7 +172,11 @@ async function handlePostRequest(contenido) {
                         await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, context.idRecipient, context.object);
                     }
                 }else{
-                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);
+                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
+                    if (afirmativo){
+                        const replies = "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No"
+                        await guardarConversacion(process.env.apiCrudChat, "assistant", replies, dateTime, context.idRecipient, context.object);
+                    }
                     await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
                 }
             }else{
@@ -210,12 +218,10 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToMessenger(context,reply) {
+async function sendMessageToMessenger(context,reply, replies) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
-    const afirmativo = await  buscarAfirmacion(context.message, "si");
-    console.log(`afirmacion: ${afirmativo}`);
-    const replies = afirmativo ? "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No" : "";
+    
     const body = {
         recipient: { id: context.idRecipient },
         messaging_type: "RESPONSE",
