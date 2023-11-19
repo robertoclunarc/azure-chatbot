@@ -97,7 +97,7 @@ async function handlePostRequest(contenido) {
             
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram;
+            const prompt = process.env.promptVentasInstagram + ' When you finish each answer, just after asking if you want to buy or complete the purchase, you must add as the last sentence: "Do you want to speak with an agent?" 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. In the event that the user presses "1" or "yes", kindly ask You indicate that a human agent will be in contact with him as soon as possible.';
            
             var reply = '';
             if (context.message!==undefined && context.message!==''){
