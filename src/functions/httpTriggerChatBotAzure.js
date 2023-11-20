@@ -44,7 +44,7 @@ async function validPostRequest(request, context) {
 
         if (idRecipient === process.env.serderIdVentaIntagram){
             return { idRecipient : process.env.serderIdVentaIntagram }
-        }
+        }        
 
         const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
 
@@ -154,15 +154,14 @@ async function handlePostRequest(contenido) {
                     content: reply,
                 }
                 context.conversation_history_dict.push(responseAssitant);
-                
+
                 const afirmativo = await  buscarAfirmacion(context.message, "si");
                 console.log(`afirmacion: ${afirmativo}`);
-                const replies = afirmativo ? "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No" : "";
                 
                 if (context.object==='instagram'){
                     console.log('Intentando enviar a instagram...');
                     //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
-                    const responseData = await sendMessageToMessenger(context, reply, replies);
+                    const responseData = await sendMessageToMessenger(context, reply);
                     //console.log(responseData.data);
                 }
                 ///Guarda conversacion
@@ -174,8 +173,9 @@ async function handlePostRequest(contenido) {
                 }else{
                     await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                     if (afirmativo){
-                        const replies = "\n Ó Desea Hablar Con Un Agente? \n1. Si\n2. No"
-                        await guardarConversacion(process.env.apiCrudChat, "assistant", replies, dateTime, context.idRecipient, context.object);
+                        const bodyUserPending = { "serder": `${context.idRecipient}`, "waiting": 1 };
+                        console.log(bodyUserPending);
+                        const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
                     }
                     await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
                 }
@@ -218,7 +218,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToMessenger(context,reply, replies) {
+async function sendMessageToMessenger(context, reply) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
     const LATEST_API_VERSION = "v18.0";
     
@@ -226,7 +226,7 @@ async function sendMessageToMessenger(context,reply, replies) {
         recipient: { id: context.idRecipient },
         messaging_type: "RESPONSE",
         message: {
-            text: reply + replies,
+            text: reply,
             quick_replies: replies!=="" ? [
                 {
                   content_type: "text",
@@ -258,20 +258,23 @@ async function sendMessageToMessenger(context,reply, replies) {
     }
 }
 
-async function buscarAfirmacion(frase, buscar) {
+async function buscarAfirmacion(frase) {
     try {
-      // Convertir toda la frase y la palabra buscada a minúsculas
-      const fraseMinusculas = frase.toLowerCase();      
+      // Convertir toda la frase a minúsculas
+      const fraseMinusculas = frase.toLowerCase();
   
-      // Crear una expresión regular para buscar la palabra completa
-      const expresionRegular = new RegExp(`\\b${buscar}\\b`, 'i');
+      // Lista de palabras a buscar
+      const palabrasBuscar = ['si', 'yes', '1'];
   
-      // Verificar si la palabra está presente en la frase
-      const resultado = expresionRegular.test(fraseMinusculas);
+      // Verificar si alguna de las palabras está presente en la frase
+      const resultado = palabrasBuscar.some(palabra => {
+        const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'i');
+        return expresionRegular.test(fraseMinusculas);
+      });
   
       return resultado;
     } catch (error) {
-      throw new Error('Error en la función buscarPalabraEnFrase: ' + error.message);
+      throw new Error('Error en la función buscarAfirmacion: ' + error.message);
     }
 }
 
