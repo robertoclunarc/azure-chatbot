@@ -51,7 +51,7 @@ async function validPostRequest(request, context) {
         
         const responsePendingRespond= await axios.get(urlApiCrudChat);
         const pendingRespond = responsePendingRespond.data;
-        context.log(`Pendiente por respuesta: ${pendingRespond}`);
+        context.log(`Pendiente por respuesta: ${JSON.stringify(pendingRespond)}`);
         if (pendingRespond?.length>0) {            
             const respond = {
                 quick_reply: [{
