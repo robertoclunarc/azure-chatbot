@@ -12,9 +12,9 @@ app.http('httpTriggerChatBotAzure', {
         } else {
             const requestValid = await validPostRequest(request, context);
             context.log(requestValid);
-            if ((requestValid?.quick_reply && requestValid?.payload==='1') || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
+            if ((requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
                 
-                context.log("Quick reply detectado, realizar acción correspondiente...");
+                context.log("Quick reply detectado, el bot no respondera...");
                 return
             } else {
                 return handlePostRequest(requestValid);
@@ -44,7 +44,26 @@ async function validPostRequest(request, context) {
 
         if (idRecipient === process.env.serderIdVentaIntagram){
             return { idRecipient : process.env.serderIdVentaIntagram }
-        }        
+        }
+
+        /////////////////
+        const urlApiCrudChat = `${process.env.apiCrudChat}?senderID=${idRecipient}`;
+        
+        const responsePendingRespond= await axios.get(urlApiCrudChat);
+        const pendingRespond = responsePendingRespond.data;
+        context.log(`Pendiente por respuesta: ${pendingRespond}`);
+        if (pendingRespond?.length>0) {            
+            const respond = {
+                quick_reply: [{
+                    content_type: "text",
+                    title: "Si",
+                    payload: "1"
+                  }],
+                  payload: "1"
+            };
+            return respond;
+        }
+        /////////////////////////
 
         const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
 
@@ -97,7 +116,7 @@ async function handlePostRequest(contenido) {
             
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' When you finish each answer, just after asking if you want to buy or complete the purchase, you must add as the last sentence: "Do you want to speak with an agent?" 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. In the event that the user presses "1" or "yes", kindly ask You indicate that a human agent will be in contact with him as soon as possible.';
+            const prompt = process.env.promptVentasInstagram + ' When you finish each answer, just after asking if you want to buy or make the purchase you should add as the last sentence: "Or Do you want to speak with an agent? 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. If the user presses "1", "yes" or "si", you kindly tell him that a human agent will be in contact with him as soon as possible, otherwise, continue with your job of selling him our inventory products and/or convincing him.';
            
             var reply = '';
             if (context.message!==undefined && context.message!==''){
@@ -173,7 +192,7 @@ async function handlePostRequest(contenido) {
                 }else{
                     await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                     if (afirmativo){
-                        const bodyUserPending = { "serder": `${context.idRecipient}`, "waiting": 1 };
+                        const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                         console.log(bodyUserPending);
                         const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
                     }
