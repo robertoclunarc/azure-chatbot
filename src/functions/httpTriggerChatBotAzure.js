@@ -227,7 +227,7 @@ async function sendMessageToMessenger(context, reply) {
         messaging_type: "RESPONSE",
         message: {
             text: reply,
-            quick_replies: replies!=="" ? [
+            quick_replies: [
                 {
                   content_type: "text",
                   title: "Si",
@@ -238,7 +238,7 @@ async function sendMessageToMessenger(context, reply) {
                   title: "No",
                   payload: "2"
                 }                
-            ] : undefined
+            ]
         },
     };
     
