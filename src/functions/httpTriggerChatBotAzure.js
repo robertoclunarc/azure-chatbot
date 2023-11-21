@@ -33,6 +33,7 @@ async function validPostRequest(request, context) {
         context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         var message;
         var idRecipient;
+        var reply;
         if (object==='whatsapp'){
             message = data?.content;
             idRecipient = data?.idRecipient;
@@ -40,8 +41,9 @@ async function validPostRequest(request, context) {
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             message = data?.entry[0]?.messaging[0]?.message?.text;
+            reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
         }
-
+        
         if (idRecipient === process.env.serderIdVentaIntagram){
             return { idRecipient : process.env.serderIdVentaIntagram }
         }
@@ -64,8 +66,6 @@ async function validPostRequest(request, context) {
             return respond;
         }
         /////////////////////////
-
-        const reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
 
         const contenido = {
             object: data.object,
