@@ -41,7 +41,7 @@ async function validPostRequest(request, context) {
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             message = data?.entry[0]?.messaging[0]?.message?.text;
-            reply = data?.entry[0]?.messaging[0]?.message?.quick_reply;
+            reply = data?.entry[0]?.messaging[0]?.message?.quick_reply?.payload==='1' ? { payload: 'Si'} : data?.entry[0]?.messaging[0]?.message?.quick_reply;
         }
         
         if (idRecipient === process.env.serderIdVentaIntagram){
