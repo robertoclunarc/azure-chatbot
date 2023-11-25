@@ -10,10 +10,10 @@ app.http('httpTriggerChatBotAzure', {
         } else {
             const requestValid = await validPostRequest(request, context);
             context.log(requestValid);
-            if ((requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
+            if (requestValid?.status===500 || (requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
                 return context.log({
                     msj:"El bot no respondera...", 
-                    error: requestValid?.error
+                    body: requestValid?.body
                 });                
             } else {
                 return handlePostRequest(requestValid);
@@ -47,9 +47,9 @@ async function validPostRequest(request, context) {
             
             reply = data?.entry[0]?.messaging[0]?.message?.quick_reply?.payload==='1' ? { payload: 'Si'} : data?.entry[0]?.messaging[0]?.message?.quick_reply;
         }
-        
+        console.log(`idrecipiente: ${idRecipient}, message: ${message}, reply: ${reply}`);
         if (idRecipient === process.env.serderIdVentaIntagram){
-            return { idRecipient : process.env.serderIdVentaIntagram, error: "idRecipient Invalido", payload: "1" };
+            return { idRecipient : process.env.serderIdVentaIntagram, body: "idRecipient Invalido", payload: "1" };
         }
         
         if (message!==undefined && message!==''){
@@ -66,7 +66,7 @@ async function validPostRequest(request, context) {
                         payload: "1"
                     }],
                     payload: "1",
-                    error: "Pendiente por respuesta del agente humano"
+                    body: "Pendiente por respuesta del agente humano"
                 };
                 return respond;
             }        
