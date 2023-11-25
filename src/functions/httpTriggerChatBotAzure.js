@@ -4,29 +4,27 @@ const axios = require('axios');
 app.http('httpTriggerChatBotAzure', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
-    handler: async (request, context) => {
-        //context.log(`La función HTTP procesó la solicitud de URL "${request.url}"`);
-        
+    handler: async (request, context) => {        
         if (request.method === 'GET') {
             return handleGetRequest(request, context);
         } else {
             const requestValid = await validPostRequest(request, context);
             context.log(requestValid);
-            if ((requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {
-                
-                context.log("Quick reply detectado, el bot no respondera...");
-                return
+            if ((requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
+                return context.log({
+                    msj:"Quick reply detectado, el bot no respondera...", 
+                    error: requestValid.error
+                });                
             } else {
                 return handlePostRequest(requestValid);
-            }
-            
+            }            
         }
     }
 });
 
 async function validPostRequest(request, context) {
     try {
-        
+        //const typeValue = jsonData.entry[0].messaging[0].message.attachments[0].type;
         const req = await request.text();
         const data = JSON.parse(req);        
         const object = data.object;
@@ -40,46 +38,53 @@ async function validPostRequest(request, context) {
         }
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
-            message = data?.entry[0]?.messaging[0]?.message?.text;
+            if (data.entry[0].messaging[0].message.attachments[0].type && data.entry[0].messaging[0].message.attachments[0].type==="story_mention"){
+                message = process.env.respuestamencion;
+            }
+            else{
+                message = data?.entry[0]?.messaging[0]?.message?.text;
+            }
+            
             reply = data?.entry[0]?.messaging[0]?.message?.quick_reply?.payload==='1' ? { payload: 'Si'} : data?.entry[0]?.messaging[0]?.message?.quick_reply;
         }
         
         if (idRecipient === process.env.serderIdVentaIntagram){
-            return { idRecipient : process.env.serderIdVentaIntagram }
+            return { idRecipient : process.env.serderIdVentaIntagram, error: "idRecipient Invalido", payload: "1" };
         }
-
-        /////////////////
-        const urlApiCrudChat = `${process.env.apiCrudChat}?senderID=${idRecipient}`;
         
-        const responsePendingRespond= await axios.get(urlApiCrudChat);
-        const pendingRespond = responsePendingRespond.data;
-        context.log(`Pendiente por respuesta: ${JSON.stringify(pendingRespond)}`);
-        if (pendingRespond?.length>0) {            
-            const respond = {
-                quick_reply: [{
-                    content_type: "text",
-                    title: "Si",
+        if (message!==undefined && message!==''){
+            const urlApiCrudChat = `${process.env.apiCrudChat}?senderID=${idRecipient}`;
+            
+            const responsePendingRespond= await axios.get(urlApiCrudChat);
+            const pendingRespond = responsePendingRespond.data;
+            
+            if (pendingRespond?.length>0) {
+                const respond = {
+                    quick_reply: [{
+                        content_type: "text",
+                        title: "Si",
+                        payload: "1"
+                    }],
                     payload: "1"
-                  }],
-                  payload: "1"
-            };
-            return respond;
-        }
-        /////////////////////////
+                };
+                return respond;
+            }        
 
-        const contenido = {
-            object: data.object,
-            idRecipient: idRecipient,
-            message: message,
-            quick_reply: reply,
-            payload: reply?.payload,
-            conversation_history_dict: [],
-            res:{                    
-                body: 'idRecipient: ' + idRecipient,
-            },
-        }
-        
-        return contenido;
+            const contenido = {
+                object: data.object,
+                idRecipient: idRecipient,
+                message: message,
+                quick_reply: reply,
+                payload: reply?.payload,
+                conversation_history_dict: [],
+                res:{                    
+                    body: 'idRecipient: ' + idRecipient,
+                },
+            }
+            return contenido;
+        }else{
+            return ({error: "No se recibio ningun mensaje que procesar mensaje!", payload: "1"});
+        }        
     } catch (error) {
         context.error(`Error en el servicio validPostRequest: ${error}`);
         context.res = {
@@ -119,88 +124,85 @@ async function handlePostRequest(contenido) {
             const prompt = process.env.promptVentasInstagram + ' When you finish each answer, just after asking if you want to buy or make the purchase you should add as the last sentence: "Or Do you want to speak with an agent? 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. If the user presses "1", "yes" or "si", you kindly tell him that a human agent will be in contact with him as soon as possible, otherwise, continue with your job of selling him our inventory products and/or convincing him.';
            
             var reply = '';
-            if (context.message!==undefined && context.message!==''){
-                const reqUser = {
-                    role: "user",
-                    content: context.message,
+            
+            const reqUser = {
+                role: "user",
+                content: context.message,
+            };
+            
+            let primeraVez=false;
+            const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${context.idRecipient}`;
+            //console.log(urlApiCrudChat);
+            const responseHistory= await axios.get(urlApiCrudChat);
+            const conversation_history_dict = responseHistory.data;
+            
+            if (conversation_history_dict?.messages.length===0) {
+                primeraVez=true
+                //context.conversation_history_dict = [];
+                const messages_init = {
+                    role: "system",
+                    content: prompt
                 };
-                
-                let primeraVez=false;
-                const urlApiCrudChat = `${process.env.apiCrudChat}?sender=${context.idRecipient}`;
-                //console.log(urlApiCrudChat);
-                const responseHistory= await axios.get(urlApiCrudChat);
-                const conversation_history_dict = responseHistory.data;
-                
-                if (conversation_history_dict?.messages.length===0) {
-                    primeraVez=true
-                    //context.conversation_history_dict = [];
-                    const messages_init = {
-                        role: "system",
-                        content: prompt
-                    };
-                    context.conversation_history_dict.push(messages_init);
-                    context.conversation_history_dict.push(reqUser);
-                }
-                else{
-                    conversation_history_dict.messages[0].conversation_history.push(reqUser);                    
-                    //console.log(conversation_history_dict.messages[0].conversation_history);
-                    context.conversation_history_dict = await conversation_history_dict.messages[0].conversation_history;
-                }
+                context.conversation_history_dict.push(messages_init);
+                context.conversation_history_dict.push(reqUser);
+            }
+            else{
+                conversation_history_dict.messages[0].conversation_history.push(reqUser);                    
+                //console.log(conversation_history_dict.messages[0].conversation_history);
+                context.conversation_history_dict = await conversation_history_dict.messages[0].conversation_history;
+            }
 
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'api-key': `${process.env.apiKeyAzureOpenAI}`,
-                };
+            const headers = {
+                'Content-Type': 'application/json',
+                'api-key': `${process.env.apiKeyAzureOpenAI}`,
+            };
 
-                const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
+            const urlServiceOpenaIAAzure = process.env.urlServiceOpenAIAzure;
 
-                const requestBody = JSON.stringify({
-                    "messages": context.conversation_history_dict,
-                    "max_tokens": 1000,
-                    "temperature": 0.5,
-                    "frequency_penalty": 0,
-                    "presence_penalty": 0,
-                    "top_p": 0.95,
-                    "stop": null,
-                });
-                //console.log(requestBody);
-                const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
+            const requestBody = JSON.stringify({
+                "messages": context.conversation_history_dict,
+                "max_tokens": 1000,
+                "temperature": 0.5,
+                "frequency_penalty": 0,
+                "presence_penalty": 0,
+                "top_p": 0.95,
+                "stop": null,
+            });
+            
+            const response = await axios.post(urlServiceOpenaIAAzure, requestBody, { headers });
 
-                const OpenAiResponse = response.data;
-                reply = OpenAiResponse.choices[0].message.content;
-                const responseAssitant = {
-                    role: "assistant",
-                    content: reply,
-                }
-                context.conversation_history_dict.push(responseAssitant);
+            const OpenAiResponse = response.data;
+            reply = OpenAiResponse.choices[0].message.content;
+            const responseAssitant = {
+                role: "assistant",
+                content: reply,
+            }
+            context.conversation_history_dict.push(responseAssitant);
 
-                const afirmativo = await  buscarAfirmacion(context.message, "si");
-                console.log(`afirmacion: ${afirmativo}`);
-                
-                if (context.object==='instagram'){
-                    console.log('Intentando enviar a instagram...');
-                    //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
-                    const responseData = await sendMessageToMessenger(context, reply);
-                    //console.log(responseData.data);
-                }
-                ///Guarda conversacion
-                if (primeraVez){                    
-                    for (const hist of context.conversation_history_dict) {
-                        //context.log(hist);
-                        await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, context.idRecipient, context.object);
-                    }
-                }else{
-                    await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
-                    if (afirmativo){
-                        const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
-                        console.log(bodyUserPending);
-                        const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
-                    }
-                    await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
+            const afirmativo = await  buscarAfirmacion(context.message, "si");            
+            
+            if (context.object==='instagram'){
+                console.log('Intentando enviar a instagram...');
+                //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
+                const responseData = await sendMessageToMessenger(context, reply);
+                //console.log(responseData.data);
+            }
+            ///Guarda conversacion
+            if (primeraVez){                    
+                for (const hist of context.conversation_history_dict) {
+                    //context.log(hist);
+                    await guardarConversacion(process.env.apiCrudChat, hist.role, hist.content, dateTime, context.idRecipient, context.object);
                 }
             }else{
-                reply = 'No se puede procesar mensaje!';
+                await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
+                if (afirmativo){
+                    const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
+                    console.log(bodyUserPending);
+                    const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
+                }
+                await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
             }
+            
             context.res = {
                 body: reply,
             };
