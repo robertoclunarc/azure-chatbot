@@ -12,8 +12,8 @@ app.http('httpTriggerChatBotAzure', {
             context.log(requestValid);
             if ((requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
                 return context.log({
-                    msj:"Quick reply detectado, el bot no respondera...", 
-                    error: requestValid.error
+                    msj:"El bot no respondera...", 
+                    error: requestValid?.error
                 });                
             } else {
                 return handlePostRequest(requestValid);
@@ -65,7 +65,8 @@ async function validPostRequest(request, context) {
                         title: "Si",
                         payload: "1"
                     }],
-                    payload: "1"
+                    payload: "1",
+                    error: "Pendiente por respuesta del agente humano"
                 };
                 return respond;
             }        
