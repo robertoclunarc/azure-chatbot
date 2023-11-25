@@ -38,7 +38,7 @@ async function validPostRequest(request, context) {
         }
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
-            if (data.entry[0].messaging[0].message.attachments[0].type && data.entry[0].messaging[0].message.attachments[0].type==="story_mention"){
+            if (data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type && data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type==="story_mention"){
                 message = process.env.respuestamencion;
             }
             else{
