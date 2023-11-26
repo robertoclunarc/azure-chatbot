@@ -41,8 +41,7 @@ async function validPostRequest(request, context) {
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type)}`);
             if (data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type=='story_mention'){
-                console.log('entro en el if');
-                console.log(process.env.respuestamencion);
+                
                 message = process.env.respuestamencion;
             }
             else{
@@ -127,7 +126,7 @@ async function handlePostRequest(contenido) {
             
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' When you finish each answer, just after asking if you want to buy or make the purchase you should add as the last sentence: "Or Do you want to speak with an agent? 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. If the user presses "1", "yes" or "si", you kindly tell him that a human agent will be in contact with him as soon as possible, otherwise, continue with your job of selling him our inventory products and/or convincing him.';
+            const prompt = process.env.promptVentasInstagram + ' If you receive a message that we were mentioned on Instagram, thank us and promote the products. When you finish each answer, just after asking if you want to buy or make the purchase you should add as the last sentence: "Or Do you want to speak with an agent? 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. If the user presses "1", "yes" or "si", you kindly tell him that a human agent will be in contact with him as soon as possible, otherwise, continue with your job of selling him our inventory products and/or convincing him.';
            
             var reply = '';
             
