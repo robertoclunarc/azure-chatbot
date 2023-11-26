@@ -40,7 +40,7 @@ async function validPostRequest(request, context) {
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message?.attachments)}`);
-            if (data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type==="story_mention"){
+            if (data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type=='story_mention'){
                 message = process.env.respuestamencion;
             }
             else{
