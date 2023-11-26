@@ -10,11 +10,13 @@ app.http('httpTriggerChatBotAzure', {
         } else {
             const requestValid = await validPostRequest(request, context);
             context.log(requestValid);
-            if (requestValid?.status===500 || (requestValid?.quick_reply && requestValid?.payload==="1") || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
-                return context.log({
+            if (requestValid?.status===500 || requestValid?.payload==="1" || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
+                const respn = {
                     msj:"El bot no respondera...", 
                     body: requestValid?.body
-                });                
+                }
+                context.log(respn);
+                return          
             } else {
                 return handlePostRequest(requestValid);
             }            
@@ -24,11 +26,10 @@ app.http('httpTriggerChatBotAzure', {
 
 async function validPostRequest(request, context) {
     try {
-        //const typeValue = jsonData.entry[0].messaging[0].message.attachments[0].type;
         const req = await request.text();
         const data = JSON.parse(req);        
         const object = data.object;
-        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         var message;
         var idRecipient;
         var reply;
@@ -38,7 +39,7 @@ async function validPostRequest(request, context) {
         }
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
-            console.log(`type: ${data?.entry[0]?.messaging[0]?.message}`);
+            console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message)}`);
             if (data?.entry[0]?.messaging[0]?.message?.attachments && data?.entry[0]?.messaging[0]?.message?.attachments[0]?.type==="story_mention"){
                 message = process.env.respuestamencion;
             }
