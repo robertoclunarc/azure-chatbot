@@ -126,7 +126,21 @@ async function handlePostRequest(contenido) {
             
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' If you receive a message that we were mentioned on Instagram, thank us and promote the products. When you finish each answer, just after asking if you want to buy or make the purchase you should add as the last sentence: "Or Do you want to speak with an agent? 1. Yes 2. No". The user could press 1 or say yes to affirm that they want to speak with an agent or they could press the 2 key to continue talking to you. If the user presses "1", "yes" or "si", you kindly tell him that a human agent will be in contact with him as soon as possible, otherwise, continue with your job of selling him our inventory products and/or convincing him.';
+            const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
+            If you detect this request, you must ask for confirmation,\
+            adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No."\
+            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
+            press the 2 key to continue speaking with you. \
+            If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as \
+            possible and send me at the end of the sentence the keyword "-alfaomega-"   \
+            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.  \
+            If you manage to convince and/or make a sale to the client, \
+            then ask for their information: 1. name and surname, 2. the exact address where you want the order to arrive, \
+            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way \
+            for visual ease of the user. \
+            Once these steps are completed and the user provides all this data, \
+            tell them that the order would arrive in 1 to 3 days and say goodbye politely and then you \
+            must respond to me with a keyword “-alfadelta-”';
            
             var reply = '';
             
@@ -178,13 +192,17 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
+            
+            const encontroClave = await  buscarPalabraClave(reply);
+            if (encontroClave){
+                reply = await eliminarPalabrasClave(reply)
+            }
+
             const responseAssitant = {
                 role: "assistant",
                 content: reply,
             }
-            context.conversation_history_dict.push(responseAssitant);
-
-            const afirmativo = await  buscarAfirmacion(context.message, "si");            
+            context.conversation_history_dict.push(responseAssitant);            
             
             if (context.object==='instagram'){
                 console.log('Intentando enviar a instagram...');
@@ -200,7 +218,7 @@ async function handlePostRequest(contenido) {
                 }
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
-                if (afirmativo){
+                if (encontroClave){
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     console.log(bodyUserPending);
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
@@ -284,13 +302,13 @@ async function sendMessageToMessenger(context, reply) {
     }
 }
 
-async function buscarAfirmacion(frase) {
+async function buscarPalabraClave(frase) {
     try {
       // Convertir toda la frase a minúsculas
       const fraseMinusculas = frase.toLowerCase();
   
       // Lista de palabras a buscar
-      const palabrasBuscar = ['si', 'yes', '1'];
+      const palabrasBuscar = ['-alfaomega-', '-alfadelta-'];
   
       // Verificar si alguna de las palabras está presente en la frase
       const resultado = palabrasBuscar.some(palabra => {
@@ -300,8 +318,28 @@ async function buscarAfirmacion(frase) {
   
       return resultado;
     } catch (error) {
-      throw new Error('Error en la función buscarAfirmacion: ' + error.message);
+      throw new Error('Error en la función buscarPalabraClave: ' + error.message);
     }
+}
+
+async function eliminarPalabrasClave(frase) {
+  try {
+    // Convertir toda la frase a minúsculas
+    const fraseMinusculas = frase.toLowerCase();
+
+    // Lista de palabras a buscar
+    const palabrasBuscar = ['-alfaomega-', '-alfadelta-'];
+
+    // Eliminar las palabras clave de la frase
+    const fraseSinPalabras = palabrasBuscar.reduce((fraseActual, palabra) => {
+      const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'gi');
+      return fraseActual.replace(expresionRegular, '');
+    }, fraseMinusculas);
+
+    return fraseSinPalabras;
+  } catch (error) {
+    throw new Error('Error en la función eliminarPalabrasClave: ' + error.message);
+  }
 }
 
 async function fotmatedDateTime(timeInMilliseconds) {
