@@ -40,12 +40,9 @@ async function validPostRequest(request, context) {
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
             //console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type)}`);
-            if (data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type=='story_mention'){
-                console.log('opcion A');
-                message = process.env.respuestamencion;
-            }
-            else{
-                console.log('opcion B');
+            if (data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type=='story_mention'){                
+                message = process.env.respuestamencion;            }
+            else{                
                 message = data?.entry[0]?.messaging[0]?.message?.text;
             }
             
@@ -196,6 +193,11 @@ async function handlePostRequest(contenido) {
             const encontroClave = await  buscarPalabraClave(reply);
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply);
+                const bodyNotif = {
+                    "object": context.object,
+                    "URL": `https://www.instagram.com/direct/t/${context.idRecipient}`,
+                }
+                const resp = axios.post(urlNotificacionWhatsapp, bodyNotif);
             }
 
             const responseAssitant = {
@@ -220,7 +222,7 @@ async function handlePostRequest(contenido) {
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                 if (encontroClave){
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
-                    console.log(bodyUserPending);
+                    
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
                 }
                 await guardarConversacion(process.env.apiCrudChat, responseAssitant.role, responseAssitant.content, dateTime, context.idRecipient, context.object);
@@ -312,11 +314,11 @@ async function buscarPalabraClave(frase) {
   
       // Verificar si alguna de las palabras está presente en la frase
       const resultado = palabrasBuscar.some(palabra => {
-        console.log(palabra);
+        
         const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'i');
         return expresionRegular.test(fraseMinusculas);
       });
-      console.log(`buscarPalabraClave: ${resultado}`)
+      
       return resultado;
     } catch (error) {
       throw new Error('Error en la función buscarPalabraClave: ' + error.message);
@@ -336,7 +338,7 @@ async function eliminarPalabrasClave(frase) {
       const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'gi');
       return fraseActual.replace(expresionRegular, '');
     }, fraseMinusculas);
-    console.log(fraseSinPalabras);
+    
     return fraseSinPalabras;
   } catch (error) {
     throw new Error('Error en la función eliminarPalabrasClave: ' + error.message);
