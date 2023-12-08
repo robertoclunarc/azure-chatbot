@@ -123,21 +123,21 @@ async function handlePostRequest(contenido) {
             
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
-            If you detect this request, You should ask for confirmation every time the user requests it,\
+            const prompt = process.env.promptVentasInstagram + ' A user could request to speak with a human sales agent.\
+            If it detects this request, you should ask for confirmation every time the user requests it,\
             adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No."\
-            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
-            press the 2 key to continue speaking with you. \
-            If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as \
-            possible and send me at the end of the sentence the keyword "alfaomega1"   \
-            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.  \
-            If you manage to convince and/or make a sale to the client, \
-            then ask for their information: 1. name and surname, 2. the exact address where you want the order to arrive, \
-            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way \
-            for visual ease of the user. \
-            Once these steps are completed and the user provides all this data, \
-            tell them that the order would arrive in 1 to 3 days and say goodbye politely and then you \
-            must respond to me with a keyword “alfadelta2”';
+            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could\
+            Press key 2 to continue talking to you.\
+            If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as they\
+            possible and send me at the end of the sentence the keyword "alfaomega1"\
+            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.\
+            If you manage to convince and/or make a sale to the client,\
+            then request your information: 1. name and surname, 2. the exact address where you want the order to arrive,\
+            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way\
+            for visual ease of the user.\
+            Once these steps are completed and the user provides all this data,\
+            tell him that the order would arrive in 1 to 3 days and say goodbye politely and then\
+            You must send me at the end of the sentence the keyword “alfadelta2”';
            
             var reply = '';
             
