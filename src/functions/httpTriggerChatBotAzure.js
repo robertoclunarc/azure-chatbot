@@ -312,10 +312,11 @@ async function buscarPalabraClave(frase) {
   
       // Verificar si alguna de las palabras está presente en la frase
       const resultado = palabrasBuscar.some(palabra => {
+        console.log(palabra);
         const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'i');
         return expresionRegular.test(fraseMinusculas);
       });
-  
+      console.log(`buscarPalabraClave: ${resultado}`)
       return resultado;
     } catch (error) {
       throw new Error('Error en la función buscarPalabraClave: ' + error.message);
