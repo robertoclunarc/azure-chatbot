@@ -197,7 +197,7 @@ async function handlePostRequest(contenido) {
                     "object": context.object,
                     "URL": `https://www.instagram.com/direct/t/${context.idRecipient}`,
                 }
-                const resp = axios.post(urlNotificacionWhatsapp, bodyNotif);
+                const resp = axios.post(process.env.urlNotificacionWhatsapp, bodyNotif);
                 console.log(resp);
             }
 
