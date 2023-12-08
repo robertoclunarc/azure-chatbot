@@ -329,7 +329,7 @@ async function eliminarPalabrasClave(frase) {
     const fraseMinusculas = frase.toLowerCase();
 
     // Lista de palabras a buscar
-    const palabrasBuscar = ['-alfaomega-', '-alfadelta-'];
+    const palabrasBuscar = ['alfaomega1', 'alfadelta2'];
 
     // Eliminar las palabras clave de la frase
     const fraseSinPalabras = palabrasBuscar.reduce((fraseActual, palabra) => {
