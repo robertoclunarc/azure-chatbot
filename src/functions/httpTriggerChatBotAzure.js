@@ -132,7 +132,7 @@ async function handlePostRequest(contenido) {
             The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
             press the 2 key to continue speaking with you. \
             If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as \
-            possible and send me at the end of the sentence the keyword "-alfaomega-"   \
+            possible and send me at the end of the sentence the keyword "alfaomega1"   \
             Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.  \
             If you manage to convince and/or make a sale to the client, \
             then ask for their information: 1. name and surname, 2. the exact address where you want the order to arrive, \
@@ -140,7 +140,7 @@ async function handlePostRequest(contenido) {
             for visual ease of the user. \
             Once these steps are completed and the user provides all this data, \
             tell them that the order would arrive in 1 to 3 days and say goodbye politely and then you \
-            must respond to me with a keyword “-alfadelta-”';
+            must respond to me with a keyword “alfadelta2”';
            
             var reply = '';
             
@@ -308,7 +308,7 @@ async function buscarPalabraClave(frase) {
       const fraseMinusculas = frase.toLowerCase();
   
       // Lista de palabras a buscar
-      const palabrasBuscar = ['-alfaomega-', '-alfadelta-'];
+      const palabrasBuscar = ['alfaomega1', 'alfadelta2'];
   
       // Verificar si alguna de las palabras está presente en la frase
       const resultado = palabrasBuscar.some(palabra => {
