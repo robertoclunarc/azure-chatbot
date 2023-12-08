@@ -29,7 +29,7 @@ async function validPostRequest(request, context) {
         const req = await request.text();
         const data = JSON.parse(req);        
         const object = data.object;
-        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         var message;
         var idRecipient;
         var reply;
@@ -39,7 +39,7 @@ async function validPostRequest(request, context) {
         }
         else{
             idRecipient = data?.entry[0]?.messaging[0]?.sender?.id;
-            console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type)}`);
+            //console.log(`type: ${JSON.stringify(data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type)}`);
             if (data?.entry[0]?.messaging[0]?.message?.attachments?.[0]?.type=='story_mention'){
                 console.log('opcion A');
                 message = process.env.respuestamencion;
@@ -51,7 +51,7 @@ async function validPostRequest(request, context) {
             
             reply = data?.entry[0]?.messaging[0]?.message?.quick_reply?.payload==='1' ? { payload: 'Si'} : data?.entry[0]?.messaging[0]?.message?.quick_reply;
         }
-        console.log(`idrecipiente: ${idRecipient}, message: ${message}, reply: ${reply}`);
+        //console.log(`idrecipiente: ${idRecipient}, message: ${message}, reply: ${reply}`);
         if (idRecipient === process.env.serderIdVentaIntagram){
             return { idRecipient : process.env.serderIdVentaIntagram, body: "idRecipient Invalido", payload: "1" };
         }
@@ -195,7 +195,7 @@ async function handlePostRequest(contenido) {
             
             const encontroClave = await  buscarPalabraClave(reply);
             if (encontroClave){
-                reply = await eliminarPalabrasClave(reply)
+                reply = await eliminarPalabrasClave(reply);
             }
 
             const responseAssitant = {
@@ -335,7 +335,7 @@ async function eliminarPalabrasClave(frase) {
       const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'gi');
       return fraseActual.replace(expresionRegular, '');
     }, fraseMinusculas);
-
+    console.log(fraseSinPalabras);
     return fraseSinPalabras;
   } catch (error) {
     throw new Error('Error en la función eliminarPalabrasClave: ' + error.message);
