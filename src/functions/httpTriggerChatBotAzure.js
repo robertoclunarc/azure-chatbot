@@ -124,7 +124,7 @@ async function handlePostRequest(contenido) {
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
-            If you detect this request, you must ask for confirmation,\
+            If you detect this request, You should ask for confirmation every time the user requests it,\
             adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No."\
             The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
             press the 2 key to continue speaking with you. \
@@ -189,7 +189,7 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
-            
+            console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply);
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply);
@@ -198,6 +198,7 @@ async function handlePostRequest(contenido) {
                     "URL": `https://www.instagram.com/direct/t/${context.idRecipient}`,
                 }
                 const resp = axios.post(urlNotificacionWhatsapp, bodyNotif);
+                console.log(resp);
             }
 
             const responseAssitant = {
