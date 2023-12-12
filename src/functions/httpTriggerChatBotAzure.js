@@ -29,7 +29,7 @@ async function validPostRequest(request, context) {
         const req = await request.text();
         const data = JSON.parse(req);        
         const object = data.object;
-        //context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
+        context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         var message;
         var idRecipient;
         var reply;
@@ -195,7 +195,7 @@ async function handlePostRequest(contenido) {
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply, palabrasClaves);
-                const urlChatUser =  context.object==='instagram' ? `https://www.instagram.com/direct/t/${context.idRecipient}` : undefined;
+                const urlChatUser = context.object==='instagram' ? `https://www.instagram.com/direct/t/${context.idRecipient}` : undefined;
                 
                 var msj;
                 if (encontroClave==palabrasClaves[0]){ // si se quiere hablar con un agente humano
