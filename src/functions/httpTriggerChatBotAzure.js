@@ -120,7 +120,7 @@ async function handlePostRequest(contenido) {
     try {
         //////valida que no se ejecute dos veces el bot
         //if (idRecipient !== process.env.serderIdVentaIntagram){
-            
+            const palabrasClaves = ['alfaomega1','alfadelta2'];
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram + ' A user could request to speak with a human sales agent.\
@@ -129,7 +129,7 @@ async function handlePostRequest(contenido) {
             The user could press 1 or say yes to affirm that she wants to speak to an agent or she could\
             Press key 2 to continue talking to you.\
             If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as they\
-            possible and send me at the end of the sentence the keyword "alfaomega1"\
+            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '"\
             Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.\
             If you manage to convince and/or make a sale to the client,\
             then request your information: 1. name and surname, 2. the exact address where you want the order to arrive,\
@@ -137,7 +137,7 @@ async function handlePostRequest(contenido) {
             for visual ease of the user.\
             Once these steps are completed and the user provides all this data,\
             tell him that the order would arrive in 1 to 3 days and say goodbye politely and then\
-            You must send me at the end of the sentence the keyword “alfadelta2”';
+            You must send me at the end of the sentence the keyword “' + palabrasClaves[1] + '”';
            
             var reply = '';
             
@@ -190,12 +190,23 @@ async function handlePostRequest(contenido) {
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
             console.log(reply);
-            const encontroClave = await  buscarPalabraClave(reply);
+            const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             if (encontroClave){
-                reply = await eliminarPalabrasClave(reply);
+                reply = await eliminarPalabrasClave(reply, palabrasClaves);
+                const urlChatUser =  context.object==='instagram' ? `https://www.instagram.com/direct/t/${context.idRecipient}` : undefined;
+                
+                var msj;
+                if (encontroClave==palabrasClaves[0]){ // si se quiere hablar con un agente humano
+                    msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano.`;
+                }else{ // si se realizo una compra
+                    msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos.`;
+                }
+                
                 const bodyNotif = {
                     "object": context.object,
-                    "URL": `https://www.instagram.com/direct/t/${context.idRecipient}`,
+                    "URL": urlChatUser,
+                    "message": msj,
+                    "subject": encontroClave==palabrasClaves[0] ? "WaitingAgentHuman" : "MakePurchase"
                 };
                 console.log(bodyNotif);
                 const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
@@ -306,34 +317,33 @@ async function sendMessageToMessenger(context, reply) {
     }
 }
 
-async function buscarPalabraClave(frase) {
+async function buscarPalabraClave(frase, palabrasClaves) {
     try {
       // Convertir toda la frase a minúsculas
       const fraseMinusculas = frase.toLowerCase();
   
       // Lista de palabras a buscar
-      const palabrasBuscar = ['alfaomega1', 'alfadelta2'];
+      const palabrasBuscar = palabrasClaves;
   
       // Verificar si alguna de las palabras está presente en la frase
-      const resultado = palabrasBuscar.some(palabra => {
-        
+      const resultado = palabrasBuscar.find(palabra => {        
         const expresionRegular = new RegExp(`\\b${palabra}\\b`, 'i');
         return expresionRegular.test(fraseMinusculas);
       });
       
-      return resultado;
+      return resultado || false;
     } catch (error) {
       throw new Error('Error en la función buscarPalabraClave: ' + error.message);
     }
 }
 
-async function eliminarPalabrasClave(frase) {
+async function eliminarPalabrasClave(frase, palabrasClaves) {
   try {
     // Convertir toda la frase a minúsculas
     const fraseMinusculas = frase.toLowerCase();
 
     // Lista de palabras a buscar
-    const palabrasBuscar = ['alfaomega1', 'alfadelta2'];
+    const palabrasBuscar = palabrasClaves;
 
     // Eliminar las palabras clave de la frase
     const fraseSinPalabras = palabrasBuscar.reduce((fraseActual, palabra) => {
