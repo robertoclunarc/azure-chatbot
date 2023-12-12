@@ -123,21 +123,23 @@ async function handlePostRequest(contenido) {
             const palabrasClaves = ['alfaomega1','alfadelta2'];
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' A user could request to speak with a human sales agent.\
-            If it detects this request, you should ask for confirmation every time the user requests it,\
-            adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No."\
-            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could\
-            Press key 2 to continue talking to you.\
-            If the user presses "1", "yes" or "si", politely tell them that a human agent will contact them as soon as they\
-            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '"\
-            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him.\
-            If you manage to convince and/or make a sale to the client,\
-            then request your information: 1. name and surname, 2. the exact address where you want the order to arrive,\
-            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way\
-            for visual ease of the user.\
-            Once these steps are completed and the user provides all this data,\
-            tell him that the order would arrive in 1 to 3 days and say goodbye politely and then\
-            You must send me at the end of the sentence the keyword “' + palabrasClaves[1] + '”';
+            const prompt = process.env.promptVentasInstagram + ' A user could request to speak with a human sales agent. \
+            If you detect this request, you must ask for confirmation every time the user requests it, \
+            adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No.", \
+            If the user asks to speak to another agent again, you must ask for confirmation again. \
+            "Do you want to speak to an agent? 1. Yes 2. No.", \
+            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
+            Press key 2 to continue talking to you. \
+            If the user presses "1", "yes" or "yes", politely tell them that a human agent will contact them as soon as they \
+            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '" \
+            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him. \
+            If you manage to convince and/or make a sale to the client, \
+            then request your information: 1. name and surname, 2. the exact address where you want the order to arrive, \
+            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way \
+            for visual ease of the user. \
+            Once these steps are completed and the user provides all this data, \
+            tell him that the order would arrive in 1 to 3 days and say goodbye politely and then \
+            You must send me the keyword "' + palabrasClaves[1] + '" at the end of the sentence';
            
             var reply = '';
             
@@ -189,7 +191,7 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
-            console.log(reply);
+            //console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply, palabrasClaves);
@@ -208,9 +210,9 @@ async function handlePostRequest(contenido) {
                     "message": msj,
                     "subject": encontroClave==palabrasClaves[0] ? "WaitingAgentHuman" : "MakePurchase"
                 };
-                console.log(bodyNotif);
+                //console.log(bodyNotif);
                 const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
-                console.log(resp);
+                //console.log(resp);
             }
 
             const responseAssitant = {
