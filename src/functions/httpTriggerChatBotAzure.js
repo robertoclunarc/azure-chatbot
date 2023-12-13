@@ -98,6 +98,8 @@ async function validPostRequest(request, context) {
 }
 
 async function handleGetRequest(request, context) {
+    //url facebook
+    //https://9ca9ysq2sk.execute-api.us-east-1.amazonaws.com/default/processmessage
     const rVerifyToken = request.query.get('hub.verify_token');
     if (rVerifyToken === process.env.VerifyToken) {
         const challenge = request.query.get('hub.challenge');
@@ -277,6 +279,46 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     } catch (error) {
         console.error(error);
     }    
+}
+
+async function sendMessageToFacebook(context, reply) {
+    const PAGE_ACCESS_TOKEN = "EAACjOBRZAdokBAM9ZCIj3waCRzUi6gioYna9ax2NeGzUcilEpInrtEpO5ajkCB7JNZBeXxPoJyGqiTXQVrBQ0CPCVATsZAu9ELYVhPjJzCaxZBo5lV3pux5ldkSad8RC4ZAmFgd27sN6doVnqR7tjVKW4GuyHS693dnk7RjOgnF9FflQfDNBNa9hZAhcZALEBnQZD";
+    const LATEST_API_VERSION = "v16.0";
+    
+    const body = {
+        recipient: { id: context.idRecipient },
+        messaging_type: "RESPONSE",
+        message: {
+            text: reply,
+            quick_replies: [
+                {
+                  content_type: "text",
+                  title: "Si",
+                  payload: "1"
+                },
+                {
+                  content_type: "text",
+                  title: "No",
+                  payload: "2"
+                }                
+            ]
+        },
+    };
+    
+    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
+    //console.log(URLInstagram);    
+    //console.log(body);
+    try {
+        const responseData = await axios.post(URLInstagram, body, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return responseData;
+    } catch (error) {
+        console.error(`Error al enviar mensaje a Facebook: ${error.message}`);
+        return null;
+    }
 }
 
 async function sendMessageToMessenger(context, reply) {
