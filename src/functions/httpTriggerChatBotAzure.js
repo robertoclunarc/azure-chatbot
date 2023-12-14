@@ -287,33 +287,20 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
 
 async function sendMessageToFacebook(context, reply) {
     const PAGE_ACCESS_TOKEN = "EAACjOBRZAdokBAM9ZCIj3waCRzUi6gioYna9ax2NeGzUcilEpInrtEpO5ajkCB7JNZBeXxPoJyGqiTXQVrBQ0CPCVATsZAu9ELYVhPjJzCaxZBo5lV3pux5ldkSad8RC4ZAmFgd27sN6doVnqR7tjVKW4GuyHS693dnk7RjOgnF9FflQfDNBNa9hZAhcZALEBnQZD";
-    const LATEST_API_VERSION = "v16.0";
+    const LATEST_API_VERSION = "v2.6";
     
     const body = {
         recipient: { id: context.idRecipient },
-        messaging_type: "RESPONSE",
         message: {
-            text: reply,
-            quick_replies: [
-                {
-                  content_type: "text",
-                  title: "Si",
-                  payload: "1"
-                },
-                {
-                  content_type: "text",
-                  title: "No",
-                  payload: "2"
-                }                
-            ]
+            text: reply           
         },
     };
     
-    const URLInstagram = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
+    const URLfacebook = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
     //console.log(URLInstagram);    
     //console.log(body);
     try {
-        const responseData = await axios.post(URLInstagram, body, {
+        const responseData = await axios.post(URLfacebook, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
