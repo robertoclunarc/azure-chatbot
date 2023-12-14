@@ -293,14 +293,14 @@ async function sendMessageToFacebook(context, reply) {
         recipient: { id: context.idRecipient },
         message: {
             text: reply           
-        },
+        }
     };
     
     const URLfacebook = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
-    //console.log(URLInstagram);    
-    //console.log(body);
+    console.log(URLInstagram);    
+    console.log(body);
     try {
-        const responseData = await axios.post(URLfacebook, body, {
+        const responseData = await axios.post(URLfacebook, JSON.stringify(body), {
             headers: {
                 'Content-Type': 'application/json'
             }
