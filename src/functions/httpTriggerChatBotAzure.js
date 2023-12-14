@@ -28,7 +28,7 @@ async function validPostRequest(request, context) {
     try {
         const req = await request.text();
         const data = JSON.parse(req);        
-        const object = data.object;
+        const object = data.object == 'page' ? 'Facebook' : data.object
         context.log(`Datos de entrada query: ${JSON.stringify(data)}`);
         var message;
         var idRecipient;
@@ -73,7 +73,7 @@ async function validPostRequest(request, context) {
             }        
 
             const contenido = {
-                object: data.object,
+                object: object,
                 idRecipient: idRecipient,
                 message: message,
                 quick_reply: reply,
@@ -224,10 +224,14 @@ async function handlePostRequest(contenido) {
             context.conversation_history_dict.push(responseAssitant);            
             
             if (context.object==='instagram'){
-                console.log('Intentando enviar a instagram...');
-                //const responseData = await sendMessageToMessenger(context, context.idRecipient, reply, context.message);
-                const responseData = await sendMessageToMessenger(context, reply);
-                //console.log(responseData.data);
+                console.log('Intentando enviar a instagram...');                
+                const instagramData = await sendMessageToMessenger(context, reply);
+                //console.log(instagramData.data);
+            }
+            if (context.object==='Facebook'){
+                console.log('Intentando enviar a facebook...');                
+                const facebookData = await sendMessageToFacebook(context, reply);
+                //console.log(facebookData.data);
             }
             ///Guarda conversacion
             if (primeraVez){                    
