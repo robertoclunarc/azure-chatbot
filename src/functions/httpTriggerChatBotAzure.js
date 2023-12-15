@@ -291,8 +291,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
 
 async function sendMessageToFacebook(context, reply) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_facebook;
-    const LATEST_API_VERSION = "v16.0";
-    
+    const LATEST_API_VERSION = "v16.0";    
     const body = {
         recipient: { id: context.idRecipient },
         message: {
