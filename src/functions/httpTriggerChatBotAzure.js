@@ -10,7 +10,7 @@ app.http('httpTriggerChatBotAzure', {
         } else {
             const requestValid = await validPostRequest(request, context);
             //context.log(requestValid);
-            if (requestValid?.status===500 || requestValid?.payload==="1" || requestValid?.idRecipient === process.env.serderIdVentaIntagram) {                
+            if (requestValid?.status===500 || requestValid?.payload==="1" || requestValid?.idRecipient === process.env.serderIdVentaIntagram || requestValid?.idRecipient === process.env.serderIdVentaFacebook) {                
                 const respn = {
                     msj:"El bot no respondera...", 
                     body: requestValid?.body
@@ -51,6 +51,10 @@ async function validPostRequest(request, context) {
         //console.log(`idrecipiente: ${idRecipient}, message: ${message}, reply: ${reply}`);
         if (idRecipient === process.env.serderIdVentaIntagram){
             return { idRecipient : process.env.serderIdVentaIntagram, body: "idRecipient Invalido", payload: "1" };
+        }
+
+        if (idRecipient === process.env.serderIdVentaFacebook){
+            return { idRecipient : process.env.serderIdVentaFacebook, body: "idRecipient Invalido", payload: "1" };
         }
         
         if (message!==undefined && message!==''){
@@ -286,7 +290,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
 }
 
 async function sendMessageToFacebook(context, reply) {
-    const PAGE_ACCESS_TOKEN = "EAACjOBRZAdokBOzLkz6wbZA3eheJydIoObOsSdN7jDgpIkXwBcfZCtOGmIbaKWTLaQZCxO5CxJI4OGrAG4tlrkp3WS51EmhZA4ZBokmfSTBibAqp3g8p7n8GBQQmBDZBMfIoZCezWMBh275wAAfybuZCNVWWq9wqNh6YUh5HoLqySdZApTAJI9GZB6owTHTImvhqVR4";
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_facebook;
     const LATEST_API_VERSION = "v16.0";
     
     const body = {
@@ -297,8 +301,7 @@ async function sendMessageToFacebook(context, reply) {
     };
     
     const URLfacebook = `https://graph.facebook.com/${LATEST_API_VERSION}/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;    
-    //console.log(`urlFacebook: ${URLfacebook}`);    
-    console.log(`bodyFAcebook: ${JSON.stringify(body)}`);
+    
     try {
         const responseData = await axios.post(URLfacebook, body, {
             headers: {
@@ -313,7 +316,7 @@ async function sendMessageToFacebook(context, reply) {
 }
 
 async function sendMessageToMessenger(context, reply) {
-    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_instagram;
     const LATEST_API_VERSION = "v18.0";
     
     const body = {
