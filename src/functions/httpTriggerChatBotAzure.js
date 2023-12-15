@@ -286,11 +286,11 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
 }
 
 async function sendMessageToFacebook(context, reply) {
-    const PAGE_ACCESS_TOKEN = "EAACjOBRZAdokBAM9ZCIj3waCRzUi6gioYna9ax2NeGzUcilEpInrtEpO5ajkCB7JNZBeXxPoJyGqiTXQVrBQ0CPCVATsZAu9ELYVhPjJzCaxZBo5lV3pux5ldkSad8RC4ZAmFgd27sN6doVnqR7tjVKW4GuyHS693dnk7RjOgnF9FflQfDNBNa9hZAhcZALEBnQZD";
+    const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO7uaxPwfS3QZCGGS3EeP0ntLfJzfCRAdBqtFUgAkw27mGncZCAZCwd55gb1DIBpco2pwZAjnTk6LuK9xVZAL68FZBj5W9GD08kSA5YgqhvZCUyowaoJkUxK11QONgRMmp84sUJqZBfWEzMXODg5jTh8lpQvZCmJNukjfyGYS5pDthajpjM54JDFm2ALc1JwSncXiVgZCX8";
     const LATEST_API_VERSION = "v16.0";
     
     const body = {
-        recipient: { id: "909870002389450"/*context.idRecipient*/ },
+        recipient: { id: context.idRecipient },
         message: {
             text: reply           
         }
@@ -300,7 +300,7 @@ async function sendMessageToFacebook(context, reply) {
     //console.log(`urlFacebook: ${URLfacebook}`);    
     console.log(`bodyFAcebook: ${JSON.stringify(body)}`);
     try {
-        const responseData = await axios.post(URLfacebook, JSON.stringify(body), {
+        const responseData = await axios.post(URLfacebook, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
