@@ -286,7 +286,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
 }
 
 async function sendMessageToFacebook(context, reply) {
-    const PAGE_ACCESS_TOKEN = "EAANHtrxRsNYBO7uaxPwfS3QZCGGS3EeP0ntLfJzfCRAdBqtFUgAkw27mGncZCAZCwd55gb1DIBpco2pwZAjnTk6LuK9xVZAL68FZBj5W9GD08kSA5YgqhvZCUyowaoJkUxK11QONgRMmp84sUJqZBfWEzMXODg5jTh8lpQvZCmJNukjfyGYS5pDthajpjM54JDFm2ALc1JwSncXiVgZCX8";
+    const PAGE_ACCESS_TOKEN = "EAACjOBRZAdokBOzLkz6wbZA3eheJydIoObOsSdN7jDgpIkXwBcfZCtOGmIbaKWTLaQZCxO5CxJI4OGrAG4tlrkp3WS51EmhZA4ZBokmfSTBibAqp3g8p7n8GBQQmBDZBMfIoZCezWMBh275wAAfybuZCNVWWq9wqNh6YUh5HoLqySdZApTAJI9GZB6owTHTImvhqVR4";
     const LATEST_API_VERSION = "v16.0";
     
     const body = {
