@@ -297,7 +297,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToFacebook(context, reply) {
+async function sendMessageToFacebook(context, reply, typeMsg) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_facebook;
     const LATEST_API_VERSION = "v18.0";
     const body = {
