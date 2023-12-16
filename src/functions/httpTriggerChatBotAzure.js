@@ -126,17 +126,18 @@ async function handlePostRequest(contenido) {
     try {
         //////valida que no se ejecute dos veces el bot
         //if (idRecipient !== process.env.serderIdVentaIntagram){
-            const palabrasClaves = ['alfaomega1','alfadelta2'];
+            const palabrasClaves = ['alfaomega1','alfadelta2', 'alfaomega2'];
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' A user could request to speak with a human sales agent. \
-            If you detect this request, you must ask for confirmation every time the user requests it, \
+            const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
+            If you detect this request, you must ask for confirmation every time the user requests it and \
             adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No.", \
-            If the user asks to speak to another agent again, you must ask for confirmation again. \
-            "Do you want to speak to an agent? 1. Yes 2. No.", \
+            Every time the user requests to speak with another agent again, you must ask for confirmation again. \
+            "Do you want to talk to an agent? 1. Yes 2. No.", every time you ask that you  \
+            must send me the keyword "' + palabrasClaves[2] + '" at the end of the question. \
             The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
             Press key 2 to continue talking to you. \
-            If the user presses "1", "yes" or "yes", politely tell them that a human agent will contact them as soon as they \
+            If the user presses "1", "yes" or "yes", politely tell them that a human agent will contact them as soon as \
             possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '" \
             Otherwise, continue with your work of selling him the products in our inventory and/or convincing him. \
             If you manage to convince and/or make a sale to the client, \
@@ -199,25 +200,32 @@ async function handlePostRequest(contenido) {
             reply = OpenAiResponse.choices[0].message.content;
             //console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
+            var typeMsg = "Response";
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply, palabrasClaves);
                 const urlChatUser = context.object==='instagram' ? `https://www.instagram.com/direct/t/${context.idRecipient}` : undefined;
                 
-                var msj;
+                var msj;                
                 if (encontroClave==palabrasClaves[0]){ // si se quiere hablar con un agente humano
+                    typeMsg = "WaitingAgentHuman";
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano.`;
-                }else{ // si se realizo una compra
+                }else if (encontroClave==palabrasClaves[2]){ // si se realizo una compra
+                    typeMsg = "MakePurchase";
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos.`;
+                }else{
+                    typeMsg = "Confirmation";
                 }
                 
                 const bodyNotif = {
                     "object": context.object,
                     "URL": urlChatUser,
                     "message": msj,
-                    "subject": encontroClave==palabrasClaves[0] ? "WaitingAgentHuman" : "MakePurchase"
+                    "subject": typeMsg
                 };
                 //console.log(bodyNotif);
-                const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
+                if (typeMsg === "WaitingAgentHuman" || typeMsg === "MakePurchase"){
+                    const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
+                }
                 //console.log(resp);
             }
 
@@ -229,12 +237,12 @@ async function handlePostRequest(contenido) {
             
             if (context.object==='instagram'){
                 console.log('Intentando enviar a instagram...');                
-                const instagramData = await sendMessageToMessenger(context, reply);
+                const instagramData = await sendMessageToMessenger(context, reply, typeMsg);
                 //console.log(instagramData.data);
             }
             if (context.object==='Facebook'){
                 console.log('Intentando enviar a facebook...');                
-                const facebookData = await sendMessageToFacebook(context, reply);
+                const facebookData = await sendMessageToFacebook(context, reply, typeMsg);
                 //console.log(facebookData.data);
             }
             ///Guarda conversacion
@@ -295,7 +303,19 @@ async function sendMessageToFacebook(context, reply) {
     const body = {
         recipient: { id: context.idRecipient },
         message: {
-            text: reply           
+            text: reply,
+            quick_replies: typeMsg === "Confirmation" ? [
+                {
+                  content_type: "text",
+                  title: "Si",
+                  payload: "1"
+                },
+                {
+                  content_type: "text",
+                  title: "No",
+                  payload: "2"
+                }                
+            ] : undefined          
         }
     };
     
@@ -314,7 +334,7 @@ async function sendMessageToFacebook(context, reply) {
     }
 }
 
-async function sendMessageToMessenger(context, reply) {
+async function sendMessageToMessenger(context, reply, typeMsg) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_instagram;
     const LATEST_API_VERSION = "v18.0";
     
@@ -323,7 +343,7 @@ async function sendMessageToMessenger(context, reply) {
         messaging_type: "RESPONSE",
         message: {
             text: reply,
-            quick_replies: [
+            quick_replies: typeMsg === "Confirmation" ? [
                 {
                   content_type: "text",
                   title: "Si",
@@ -334,7 +354,7 @@ async function sendMessageToMessenger(context, reply) {
                   title: "No",
                   payload: "2"
                 }                
-            ]
+            ] : undefined
         },
     };
     
