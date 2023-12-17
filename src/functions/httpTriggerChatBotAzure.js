@@ -127,6 +127,7 @@ async function handlePostRequest(contenido) {
         //////valida que no se ejecute dos veces el bot
         //if (idRecipient !== process.env.serderIdVentaIntagram){
             const palabrasClaves = ['alfaomega1','alfadelta2', 'alfaomega2'];
+            const typesMessages = ['Response', 'WaitingAgentHuman', 'MakePurchase', 'Confirmation'];
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
             const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
@@ -200,20 +201,25 @@ async function handlePostRequest(contenido) {
             reply = OpenAiResponse.choices[0].message.content;
             //console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
-            var typeMsg = "Response";
+            var typeMsg = typesMessages[0];
             if (encontroClave){
                 reply = await eliminarPalabrasClave(reply, palabrasClaves);
-                const urlChatUser = context.object==='instagram' ? `https://www.instagram.com/direct/t/${context.idRecipient}` : undefined;
+                var urlChatUser;
+                if (context.object==='instagram'){
+                    urlChatUser = `https://www.instagram.com/direct/t/${context.idRecipient}`;
+                }else if (context.object==='Facebook'){
+                    urlChatUser = `https://www.facebook.com/messages/t/${context.idRecipient}`;
+                }
                 
                 var msj;                
                 if (encontroClave==palabrasClaves[0]){ // si se quiere hablar con un agente humano
-                    typeMsg = "WaitingAgentHuman";
+                    typeMsg = typesMessages[1];
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano.`;
                 }else if (encontroClave==palabrasClaves[2]){ // si se realizo una compra
-                    typeMsg = "MakePurchase";
+                    typeMsg = typesMessages[2];
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos.`;
                 }else{
-                    typeMsg = "Confirmation";
+                    typeMsg = typesMessages[3];
                 }
                 
                 const bodyNotif = {
@@ -223,7 +229,7 @@ async function handlePostRequest(contenido) {
                     "subject": typeMsg
                 };
                 //console.log(bodyNotif);
-                if (typeMsg === "WaitingAgentHuman" || typeMsg === "MakePurchase"){
+                if (typeMsg === typesMessages[1] || typeMsg === typesMessages[2]){
                     const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
                 }
                 //console.log(resp);
@@ -253,7 +259,7 @@ async function handlePostRequest(contenido) {
                 }
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
-                if (encontroClave){
+                if (typeMsg === typesMessages[1] || typeMsg === typesMessages[2]){
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
