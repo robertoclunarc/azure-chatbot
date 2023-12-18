@@ -197,7 +197,7 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
-            //console.log(reply);
+            console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             var typeMsg = typesMessages[0];
             if (encontroClave){
@@ -219,6 +219,8 @@ async function handlePostRequest(contenido) {
                 }else{
                     typeMsg = typesMessages[3];
                 }
+                
+                console.log(`typeMensaje: ${typeMsg}`);
                 
                 const bodyNotif = {
                     "object": context.object,
@@ -258,7 +260,7 @@ async function handlePostRequest(contenido) {
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                 if (encontroClave==palabrasClaves[0]){
-                    //console.log(typeMsg);
+                    
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
