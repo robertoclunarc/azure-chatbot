@@ -257,7 +257,7 @@ async function handlePostRequest(contenido) {
                 }
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
-                if (typeMsg === typesMessages[1] || typeMsg === typesMessages[2]){
+                if (encontroClave==palabrasClaves[0]){
                     console.log(typeMsg);
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     
