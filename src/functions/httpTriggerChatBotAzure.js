@@ -197,7 +197,7 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
-            //console.log(reply);
+            console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             var typeMsg = typesMessages[0];
             if (encontroClave){
