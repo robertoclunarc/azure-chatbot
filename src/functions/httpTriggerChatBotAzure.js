@@ -243,12 +243,12 @@ async function handlePostRequest(contenido) {
             
             if (context.object==='instagram'){
                 console.log('Intentando enviar a instagram...');                
-                const instagramData = await sendMessageToMessenger(context, reply, typeMsg);
+                const instagramData = await sendMessagerInstagram(context, reply, typeMsg);
                 //console.log(instagramData.data);
             }
             if (context.object==='Facebook'){
                 console.log('Intentando enviar a facebook...');                
-                const facebookData = await sendMessageToFacebook(context, reply, typeMsg);
+                const facebookData = await sendMessagerFacebook(context, reply, typeMsg);
                 //console.log(facebookData.data);
             }
             ///Guarda conversacion
@@ -260,6 +260,7 @@ async function handlePostRequest(contenido) {
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                 if (typeMsg === typesMessages[1] || typeMsg === typesMessages[2]){
+                    console.log(typeMsg);
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
@@ -303,7 +304,7 @@ async function guardarConversacion(url, role, message, dateTime, sender, object)
     }    
 }
 
-async function sendMessageToFacebook(context, reply, typeMsg) {
+async function sendMessagerFacebook(context, reply, typeMsg) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_facebook;
     const LATEST_API_VERSION = "v18.0";
     const body = {
@@ -340,7 +341,7 @@ async function sendMessageToFacebook(context, reply, typeMsg) {
     }
 }
 
-async function sendMessageToMessenger(context, reply, typeMsg) {
+async function sendMessagerInstagram(context, reply, typeMsg) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN_instagram;
     const LATEST_API_VERSION = "v18.0";
     
