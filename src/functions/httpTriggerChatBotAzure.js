@@ -130,22 +130,15 @@ async function handlePostRequest(contenido) {
             const typesMessages = ['Response', 'WaitingAgentHuman', 'MakePurchase', 'Confirmation'];
             const tiempo = new Date(); //new Date(data.entry[0].time)
             const dateTime = await fotmatedDateTime(tiempo);
-            const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
-            If you detect this request, you must ask for confirmation every time the user requests it and \
-            adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No.", \
-            Every time the user requests to speak to another agent again, you must ask for that confirmation again. \
-            "Do you want to speak to an agent? 1. Yes 2. No.", and every time you ask for that confirmation you must send me \
-            the keyword "' + palabrasClaves[2] + '" at the end of that question. The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
-            Press key 2 to continue talking to you. If the user presses "1" or "yes", never deny that another seller is available, \
-            politely tell them that a human agent will contact them as soon as possible, \
-            and then send me at the end of that sentence the keyword "' + palabrasClaves[0] + '",\
-            Otherwise, continue with your work of selling him the products in our inventory and/or convincing him. \
-            If you manage to convince and/or make a sale to the client, \
-            then request your information: 1. name and surname, 2. the exact address where you want the order to arrive, \
-            3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way \
-            for visual ease of the user. Once these steps are completed and the user provides all this data, \
-            tell him that the order would arrive in 1 to 3 days and say goodbye politely and then \
-            You must send me the keyword "' + palabrasClaves[1] + '" at the end of the sentence.'
+            const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. If you detect this request, you must ask for confirmation each time the user requests it and adding as the last question: \
+            "Do you want to speak with an agent? 1. Yes 2. No.", list both options for better visualization. Every time the user requests to speak to another agent again, you must ask for \
+            that confirmation again, "Do you want to speak with an agent? 1. Yes 2. No.", and each time you ask for that confirmation you must send me the keyword "' + palabrasClaves[2] + '" at the end \
+            of that question. The user could press "1" or say "yes" to affirm that they want to speak to an agent or they could press the "2" key to continue speaking with you. \
+            If the user presses "1" or "yes", never deny that there is another seller available, write the following sentence: "Perfect, a human sales agent will contact you as soon as possible, \
+            see you later. ' + palabrasClaves[0] + '", In case Otherwise, continue with your job of selling him the products in our inventory and/or convincing him. If you manage to convince \
+            and/or make a sale to the customer, then request your information: 1. name and surname, 2. the exact address where you want the order to arrive, 3. location on Google Maps, \
+            4. telephone number, 5. time available to receive. list them that way so the user can better distinguish the requests. Once these steps are completed and the user provides all this data, \
+            tell them that the order would arrive in 1 to 3 days and say goodbye politely and then you must send me the keyword "' + palabrasClaves[1] + '" at the end of the sentence';
            
             var reply = '';
             
