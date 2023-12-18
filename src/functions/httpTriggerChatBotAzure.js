@@ -258,7 +258,7 @@ async function handlePostRequest(contenido) {
             }else{
                 await guardarConversacion(process.env.apiCrudChat, reqUser.role, reqUser.content, dateTime, context.idRecipient, context.object);                    
                 if (encontroClave==palabrasClaves[0]){
-                    console.log(typeMsg);
+                    //console.log(typeMsg);
                     const bodyUserPending = { "sender": `${context.idRecipient}`, "waiting": 1 };
                     
                     const responseUserPending= await axios.post(process.env.apiCrudChat, bodyUserPending);
