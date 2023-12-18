@@ -133,21 +133,19 @@ async function handlePostRequest(contenido) {
             const prompt = process.env.promptVentasInstagram + ' A user could request to speak to a human sales agent. \
             If you detect this request, you must ask for confirmation every time the user requests it and \
             adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No.", \
-            Every time the user requests to speak with another agent again, you must ask for confirmation again. \
-            "Do you want to talk to an agent? 1. Yes 2. No.", every time you ask that you  \
-            must send me the keyword "' + palabrasClaves[2] + '" at the end of the question. \
-            The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
-            Press key 2 to continue talking to you. \
-            If the user presses "1", "yes" or "yes", politely tell them that a human agent will contact them as soon as \
-            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '" \
+            Every time the user requests to speak to another agent again, you must ask for that confirmation again. \
+            "Do you want to speak to an agent? 1. Yes 2. No.", and every time you ask for that confirmation you must send me \
+            the keyword "' + palabrasClaves[2] + '" at the end of the question. The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
+            Press key 2 to continue talking to you. If the user presses "1", "yes" or "si", never deny that another seller is available, politely tell them \
+            that a human agent will contact them as soon as they \
+            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '",\
             Otherwise, continue with your work of selling him the products in our inventory and/or convincing him. \
             If you manage to convince and/or make a sale to the client, \
             then request your information: 1. name and surname, 2. the exact address where you want the order to arrive, \
             3. location on Google Maps, 4. telephone number, 5. time available to receive. list them that way \
-            for visual ease of the user. \
-            Once these steps are completed and the user provides all this data, \
+            for visual ease of the user. Once these steps are completed and the user provides all this data, \
             tell him that the order would arrive in 1 to 3 days and say goodbye politely and then \
-            You must send me the keyword "' + palabrasClaves[1] + '" at the end of the sentence';
+            You must send me the keyword "' + palabrasClaves[1] + '" at the end of the sentence'
            
             var reply = '';
             
@@ -188,7 +186,7 @@ async function handlePostRequest(contenido) {
             const requestBody = JSON.stringify({
                 "messages": context.conversation_history_dict,
                 "max_tokens": 1000,
-                "temperature": 0.5,
+                "temperature": 0.7,
                 "frequency_penalty": 0,
                 "presence_penalty": 0,
                 "top_p": 0.95,
