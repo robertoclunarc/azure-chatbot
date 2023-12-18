@@ -136,9 +136,9 @@ async function handlePostRequest(contenido) {
             Every time the user requests to speak to another agent again, you must ask for that confirmation again. \
             "Do you want to speak to an agent? 1. Yes 2. No.", and every time you ask for that confirmation you must send me \
             the keyword "' + palabrasClaves[2] + '" at the end of that question. The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
-            Press key 2 to continue talking to you. If the user presses "1" or "yes", never deny that another seller is available, politely tell them \
-            that a human agent will contact them as soon as they \
-            possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '",\
+            Press key 2 to continue talking to you. If the user presses "1" or "yes", never deny that another seller is available, \
+            politely tell them that a human agent will contact them as soon as possible, \
+            and then send me at the end of that sentence the keyword "' + palabrasClaves[0] + '",\
             Otherwise, continue with your work of selling him the products in our inventory and/or convincing him. \
             If you manage to convince and/or make a sale to the client, \
             then request your information: 1. name and surname, 2. the exact address where you want the order to arrive, \
@@ -197,7 +197,7 @@ async function handlePostRequest(contenido) {
 
             const OpenAiResponse = response.data;
             reply = OpenAiResponse.choices[0].message.content;
-            console.log(reply);
+            //console.log(reply);
             const encontroClave = await  buscarPalabraClave(reply, palabrasClaves);
             var typeMsg = typesMessages[0];
             if (encontroClave){
@@ -220,7 +220,7 @@ async function handlePostRequest(contenido) {
                     typeMsg = typesMessages[3];
                 }
                 
-                console.log(`typeMensaje: ${typeMsg}`);
+                //console.log(`typeMensaje: ${typeMsg}`);
                 
                 const bodyNotif = {
                     "object": context.object,
