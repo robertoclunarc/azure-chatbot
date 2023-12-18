@@ -15,7 +15,7 @@ app.http('httpTriggerChatBotAzure', {
                     msj:"El bot no respondera...", 
                     body: requestValid?.body
                 }
-                context.log(respn);
+                //context.log(respn);
                 return          
             } else {
                 return handlePostRequest(requestValid);
@@ -135,7 +135,7 @@ async function handlePostRequest(contenido) {
             adding as the last question: "Do you want to talk to an agent? 1. Yes 2. No.", \
             Every time the user requests to speak to another agent again, you must ask for that confirmation again. \
             "Do you want to speak to an agent? 1. Yes 2. No.", and every time you ask for that confirmation you must send me \
-            the keyword "' + palabrasClaves[2] + '" at the end of the question. The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
+            the keyword "' + palabrasClaves[2] + '" at the end of that question. The user could press 1 or say yes to affirm that she wants to speak to an agent or she could \
             Press key 2 to continue talking to you. If the user presses "1" or "yes", never deny that another seller is available, politely tell them \
             that a human agent will contact them as soon as they \
             possible and send me at the end of the sentence the keyword "' + palabrasClaves[0] + '",\
