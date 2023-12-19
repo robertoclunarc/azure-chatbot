@@ -206,7 +206,7 @@ async function handlePostRequest(contenido) {
                 if (encontroClave==palabrasClaves[0]){ // si se quiere hablar con un agente humano
                     typeMsg = typesMessages[1];
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Quiere Conversar Con Un Agente Humano.`;
-                }else if (encontroClave==palabrasClaves[2]){ // si se realizo una compra
+                }else if (encontroClave==palabrasClaves[1]){ // si se realizo una compra
                     typeMsg = typesMessages[2];
                     msj = urlChatUser!==undefined ? `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos. Para Ingresar al Chat hacer Click: ${urlChatUser}` : `Un usuario en ${context.object} Desea Concretar Una Comprar de Uno de Nuestro Productos.`;
                 }else{
