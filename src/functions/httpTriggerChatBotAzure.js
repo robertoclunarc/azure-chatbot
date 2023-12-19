@@ -213,7 +213,7 @@ async function handlePostRequest(contenido) {
                     typeMsg = typesMessages[3];
                 }
                 
-                //console.log(`typeMensaje: ${typeMsg}`);
+                console.log(`typeMensaje: ${typeMsg}`);
                 
                 const bodyNotif = {
                     "object": context.object,
@@ -221,7 +221,7 @@ async function handlePostRequest(contenido) {
                     "message": msj,
                     "subject": typeMsg
                 };
-                //console.log(bodyNotif);
+                console.log(bodyNotif);
                 if (typeMsg === typesMessages[1] || typeMsg === typesMessages[2]){
                     const resp = await axios.post(process.env.urlNotificacionWhatsapp, bodyNotif, { 'Content-Type': 'application/json' });
                 }
